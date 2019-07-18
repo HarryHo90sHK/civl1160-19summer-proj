@@ -2,7 +2,7 @@ export const styles = {
 	container: {
 		margin: "2%"
 	},
-	right: {
-		float: "right"
+	input: {
+		width: "20vw"
 	}
 };
