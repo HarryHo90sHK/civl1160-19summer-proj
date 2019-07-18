@@ -8,6 +8,7 @@ import { LoggerSaga } from "./logger/logger-saga";
 import { AuthSaga } from "./auth/auth-saga";
 import { FileUploadSaga } from "./file-upload/file-upload-saga";
 import { FileRemoveSaga } from "./file-remove/file-remove-saga";
+import { BlogSaga } from "./blog/blog-saga";
 
 const saga = createSagaMiddleware();
 
@@ -23,7 +24,8 @@ saga.run(function* () {
 		...[
 			AuthSaga,
 			FileUploadSaga,
-			FileRemoveSaga
+			FileRemoveSaga,
+			BlogSaga
 		].map(fork)
 	]);
 });
