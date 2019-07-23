@@ -22,6 +22,11 @@ class Component extends React.Component {
 		const blog = this.props.Meteor.collection.blogs.find((blog) => {
 			return (blog._id === this.props.match.params._id);
 		});
+		if (!blog) {
+			return (
+				<React.Fragment/>
+			);
+		}
 		return (
 			<React.Fragment>
 				<PageHeader
@@ -30,6 +35,16 @@ class Component extends React.Component {
 					}}
 					title={(blog ? blog.title : "")}
 				/>
+				<div style={styles.container}>
+					{
+						blog.categories.map((category, index) => {
+							if (index === 0) {
+								return "#" + category;
+							}
+							return " #" + category;
+						})
+					}
+				</div>
 				<div style={styles.container}>
 					<div
 						dangerouslySetInnerHTML={{
