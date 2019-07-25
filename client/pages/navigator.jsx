@@ -4,6 +4,7 @@ import { createBrowserHistory } from "history";
 import { IndexPage } from "./index-page/index-page";
 import { CreatePage } from "./create-page/create-page";
 import { BlogPage } from "./blog-page/blog-page";
+import { BlogUpdatePage } from "./blog-update-page/blog-update-page";
 
 const history = createBrowserHistory();
 
@@ -25,8 +26,13 @@ export const Navigator = () => {
 				/>
 				<Route
 					exact
-					path="/blogs/:_id"
+					path="/blogs/view/:_id"
 					component={BlogPage}
+				/>
+				<Route
+					exact
+					path="/blogs/edit/:_id"
+					component={BlogUpdatePage}
 				/>
 			</Switch>
 		</Router>

@@ -18,7 +18,45 @@ const post = function* (action) {
 
 const postSuccess = function* (action) {
 	try {
-		window.location = "/blogs/" + action.payload._id;
+		window.location = "/blogs/view/" + action.payload._id;
+	} catch (err) {
+
+	}
+};
+
+const edit = function* (action) {
+	try {
+		blogs_db.update(action.payload._id, {
+			$set: {
+				quill: action.payload.quill
+			}
+		});
+		yield put(BlogAction.editSuccess(action.payload._id));
+	} catch (err) {
+
+	}
+};
+
+const editSuccess = function* (action) {
+	try {
+		window.location = "/blogs/view/" + action.payload._id;
+	} catch (err) {
+
+	}
+};
+
+const remove = function* (action) {
+	try {
+		blogs_db.remove(action.payload._id);
+		yield put(BlogAction.removeSuccess());
+	} catch (err) {
+
+	}
+};
+
+const removeSuccess = function* () {
+	try {
+		window.location = "/";
 	} catch (err) {
 
 	}
@@ -27,4 +65,8 @@ const postSuccess = function* (action) {
 export const BlogSaga = function* () {
 	yield takeEvery(BlogAction.POST, post);
 	yield takeLatest(BlogAction.POST_SUCCESS, postSuccess);
+	yield takeEvery(BlogAction.EDIT, edit);
+	yield takeLatest(BlogAction.EDIT_SUCCESS, editSuccess);
+	yield takeEvery(BlogAction.REMOVE, remove);
+	yield takeLatest(BlogAction.REMOVE_SUCCESS, removeSuccess);
 };
