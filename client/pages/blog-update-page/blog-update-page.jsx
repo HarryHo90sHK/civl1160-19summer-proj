@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { Button, PageHeader } from "antd";
+import { EditorComponent } from "../../components/editor-component/editor-component";
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
@@ -12,6 +13,9 @@ class Component extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.state = {
+			quill: ""
+		};
 	}
 
 	render() {
@@ -30,28 +34,6 @@ class Component extends React.Component {
 						this.props.history.push("/");
 					}}
 					title={(blog ? blog.title : "")}
-					extra={[
-						(
-							<Button
-								type="primary"
-								onClick={() => {
-									this.props.history.push("/blogs/edit/" + this.props.match.params._id);
-								}}
-							>
-								Edit
-							</Button>
-						),
-						(
-							<Button
-								type="danger"
-								onClick={() => {
-									this.props.dispatch(BlogAction.remove(this.props.match.params._id));
-								}}
-							>
-								Delete
-							</Button>
-						)
-					]}
 				/>
 				<div style={styles.container}>
 					{
@@ -64,14 +46,39 @@ class Component extends React.Component {
 					}
 				</div>
 				<div style={styles.container}>
-					<div
-						dangerouslySetInnerHTML={{
-							__html: blog ? blog.quill : ""
+					<EditorComponent
+						value={this.state.quill}
+						onChange={(value) => {
+							this.setState({
+								quill: value
+							});
 						}}
 					/>
 				</div>
+				<div style={styles.container}>
+					<Button
+						type="primary"
+						onClick={() => {
+							const quill = this.state.quill;
+							this.props.dispatch(BlogAction.edit(this.props.match.params._id, quill));
+						}}
+					>
+						Submit
+					</Button>
+				</div>
 			</React.Fragment>
 		);
+	}
+
+	componentDidMount() {
+		const blog = this.props.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		if (blog) {
+			this.setState({
+				quill: blog.quill
+			});
+		}
 	}
 
 }
@@ -95,4 +102,4 @@ const Redux = connect(() => {
 	return {};
 })(Tracker);
 
-export const BlogPage = Redux;
+export const BlogUpdatePage = Redux;
