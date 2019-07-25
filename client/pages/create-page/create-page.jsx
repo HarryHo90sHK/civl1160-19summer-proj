@@ -45,22 +45,13 @@ class Component extends React.Component {
 					/>
 				</div>
 				<div style={styles.container}>
-					<EditorComponent
-						value={this.state.quill}
-						onChange={(value) => {
-							this.setState({
-								quill: value
-							});
-						}}
-					/>
-				</div>
-				<div style={styles.container}>
 					<TreeSelect
 						showSearch
 						style={styles.input}
 						placeholder="select categories"
 						allowClear
 						multiple
+						value={this.state.categories}
 						onChange={(value) => {
 							this.setState({
 								categories: value
@@ -91,6 +82,16 @@ class Component extends React.Component {
 							})
 						}
 					</TreeSelect>
+				</div>
+				<div style={styles.container}>
+					<EditorComponent
+						value={this.state.quill}
+						onChange={(value) => {
+							this.setState({
+								quill: value
+							});
+						}}
+					/>
 				</div>
 				<div style={styles.container}>
 					<Input

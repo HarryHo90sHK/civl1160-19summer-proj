@@ -28,7 +28,8 @@ const edit = function* (action) {
 	try {
 		blogs_db.update(action.payload._id, {
 			$set: {
-				quill: action.payload.quill
+				quill: action.payload.quill,
+				categories: action.payload.categories
 			}
 		});
 		yield put(BlogAction.editSuccess(action.payload._id));

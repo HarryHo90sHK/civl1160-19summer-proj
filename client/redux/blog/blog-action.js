@@ -28,12 +28,13 @@ export class BlogAction {
 		};
 	};
 
-	static edit = (_id, quill) => {
+	static edit = (_id, quill, categories) => {
 		return {
 			type: BlogAction.EDIT,
 			payload: {
 				_id: _id,
-				quill: quill
+				quill: quill,
+				categories: categories
 			}
 		};
 	};

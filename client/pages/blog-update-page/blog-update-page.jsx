@@ -2,19 +2,22 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Button, PageHeader } from "antd";
+import { Button, PageHeader, TreeSelect } from "antd";
 import { EditorComponent } from "../../components/editor-component/editor-component";
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
 import { BlogAction } from "../../redux/blog/blog-action";
+import _ from "lodash";
 
 class Component extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			quill: ""
+			quill: "",
+			categories: [],
+			tempCategory: ""
 		};
 	}
 
@@ -36,14 +39,43 @@ class Component extends React.Component {
 					title={(blog ? blog.title : "")}
 				/>
 				<div style={styles.container}>
-					{
-						blog.categories.map((category, index) => {
-							if (index === 0) {
-								return "#" + category;
-							}
-							return " #" + category;
-						})
-					}
+					<TreeSelect
+						showSearch
+						style={styles.input}
+						placeholder="select categories"
+						allowClear
+						multiple
+						value={this.state.categories}
+						onChange={(value) => {
+							this.setState({
+								categories: value
+							});
+						}}
+						onSearch={(value) => {
+							this.setState({
+								tempCategory: value
+							});
+						}}
+					>
+						{
+							_.union(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+								return [
+									...accumulator,
+									...current.categories
+								];
+							}, [])), (this.state.tempCategory !== "" ? [
+								this.state.tempCategory
+							] : [])).map((category, index) => {
+								return (
+									<TreeSelect.TreeNode
+										value={category}
+										title={category}
+										key={index}
+									/>
+								);
+							})
+						}
+					</TreeSelect>
 				</div>
 				<div style={styles.container}>
 					<EditorComponent
@@ -60,7 +92,8 @@ class Component extends React.Component {
 						type="primary"
 						onClick={() => {
 							const quill = this.state.quill;
-							this.props.dispatch(BlogAction.edit(this.props.match.params._id, quill));
+							const categories = this.state.categories;
+							this.props.dispatch(BlogAction.edit(this.props.match.params._id, quill, categories));
 						}}
 					>
 						Submit
@@ -76,7 +109,23 @@ class Component extends React.Component {
 		});
 		if (blog) {
 			this.setState({
-				quill: blog.quill
+				quill: blog.quill,
+				categories: blog.categories
+			});
+		}
+	}
+
+	componentDidUpdate(prevProp, prevState, snapshot) {
+		const cache = prevProp.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		const blog = this.props.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		if (cache === undefined && blog !== undefined) {
+			this.setState({
+				quill: blog.quill,
+				categories: blog.categories
 			});
 		}
 	}
