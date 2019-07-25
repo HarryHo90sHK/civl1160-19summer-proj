@@ -33,6 +33,7 @@ class Component extends React.Component {
 					extra={[
 						(
 							<Button
+								key="edit"
 								type="primary"
 								onClick={() => {
 									this.props.history.push("/blogs/edit/" + this.props.match.params._id);
@@ -43,6 +44,7 @@ class Component extends React.Component {
 						),
 						(
 							<Button
+								key="delete"
 								type="danger"
 								onClick={() => {
 									this.props.dispatch(BlogAction.remove(this.props.match.params._id));
