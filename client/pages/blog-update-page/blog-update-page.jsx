@@ -2,13 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Button, Input, message, PageHeader, TreeSelect } from "antd";
-import _ from "lodash";
+import { Button, PageHeader, TreeSelect } from "antd";
 import { EditorComponent } from "../../components/editor-component/editor-component";
 import { blogs_db } from "../../../shared/collections/blogs";
-import { BlogAction } from "../../redux/blog/blog-action";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
+import { BlogAction } from "../../redux/blog/blog-action";
+import _ from "lodash";
 
 class Component extends React.Component {
 
@@ -16,34 +16,28 @@ class Component extends React.Component {
 		super(props);
 		this.state = {
 			quill: "",
-			title: "",
-			author: "",
 			categories: [],
 			tempCategory: ""
 		};
 	}
 
 	render() {
+		const blog = this.props.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		if (!blog) {
+			return (
+				<React.Fragment/>
+			);
+		}
 		return (
 			<React.Fragment>
 				<PageHeader
 					onBack={() => {
 						this.props.history.push("/");
 					}}
-					title="Create Blog Post"
+					title={(blog ? blog.title : "")}
 				/>
-				<div style={styles.container}>
-					<Input
-						style={styles.input}
-						placeholder="Title"
-						value={this.state.title}
-						onChange={(e) => {
-							this.setState({
-								title: e.target.value
-							});
-						}}
-					/>
-				</div>
 				<div style={styles.container}>
 					<TreeSelect
 						showSearch
@@ -94,30 +88,12 @@ class Component extends React.Component {
 					/>
 				</div>
 				<div style={styles.container}>
-					<Input
-						style={styles.input}
-						placeholder="Author"
-						value={this.state.author}
-						onChange={(e) => {
-							this.setState({
-								author: e.target.value
-							});
-						}}
-					/>
-				</div>
-				<div style={styles.container}>
 					<Button
 						type="primary"
 						onClick={() => {
 							const quill = this.state.quill;
-							const title = this.state.title;
-							const author = this.state.author;
 							const categories = this.state.categories;
-							if (title === "") {
-								message.info("Title cannot be blank.");
-								return;
-							}
-							this.props.dispatch(BlogAction.post(quill, title, categories, author));
+							this.props.dispatch(BlogAction.edit(this.props.match.params._id, quill, categories));
 						}}
 					>
 						Submit
@@ -125,6 +101,33 @@ class Component extends React.Component {
 				</div>
 			</React.Fragment>
 		);
+	}
+
+	componentDidMount() {
+		const blog = this.props.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		if (blog) {
+			this.setState({
+				quill: blog.quill,
+				categories: blog.categories
+			});
+		}
+	}
+
+	componentDidUpdate(prevProp, prevState, snapshot) {
+		const cache = prevProp.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		const blog = this.props.Meteor.collection.blogs.find((blog) => {
+			return (blog._id === this.props.match.params._id);
+		});
+		if (cache === undefined && blog !== undefined) {
+			this.setState({
+				quill: blog.quill,
+				categories: blog.categories
+			});
+		}
 	}
 
 }
@@ -148,4 +151,4 @@ const Redux = connect(() => {
 	return {};
 })(Tracker);
 
-export const CreatePage = Redux;
+export const BlogUpdatePage = Redux;

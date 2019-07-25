@@ -43,13 +43,13 @@ class Component extends React.Component {
 								<List.Item key={item._id}>
 									<List.Item.Meta
 										title={(
-											<a href={"/blogs/" + item._id}>
+											<a href={"/blogs/view/" + item._id}>
 												{item.title}
 											</a>
 										)}
 										description={item.author}
 									/>
-									{extract(item.quill).substring(0, 128) + "..."}
+									{extract(item.quill).substring(0, 255) + "..."}
 								</List.Item>
 							);
 						}}
