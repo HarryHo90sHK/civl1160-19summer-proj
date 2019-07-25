@@ -2,20 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { PageHeader } from "antd";
+import { Button, PageHeader } from "antd";
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
+import { BlogAction } from "../../redux/blog/blog-action";
 
 class Component extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			quill: "",
-			title: "",
-			author: ""
-		};
 	}
 
 	render() {
@@ -34,6 +30,30 @@ class Component extends React.Component {
 						this.props.history.push("/");
 					}}
 					title={(blog ? blog.title : "")}
+					extra={[
+						(
+							<Button
+								key="edit"
+								type="primary"
+								onClick={() => {
+									this.props.history.push("/blogs/edit/" + this.props.match.params._id);
+								}}
+							>
+								Edit
+							</Button>
+						),
+						(
+							<Button
+								key="delete"
+								type="danger"
+								onClick={() => {
+									this.props.dispatch(BlogAction.remove(this.props.match.params._id));
+								}}
+							>
+								Delete
+							</Button>
+						)
+					]}
 				/>
 				<div style={styles.container}>
 					{
