@@ -7,6 +7,7 @@ const post = function* (action) {
 		const _id = blogs_db.insert({
 			quill: action.payload.quill,
 			title: action.payload.title,
+			categories: action.payload.categories,
 			author: action.payload.author
 		});
 		yield put(BlogAction.postSuccess(_id));
