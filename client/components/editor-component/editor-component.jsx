@@ -25,9 +25,6 @@ class Component extends React.Component {
 										3,
 										false
 									]
-								},
-								{
-									font: []
 								}
 							],
 							[
