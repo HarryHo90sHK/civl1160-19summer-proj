@@ -30,12 +30,12 @@ class Component extends React.Component {
 					onBack={() => {
 						this.props.history.push("/");
 					}}
-					title="Create Blog Post"
+					title="新文章"
 				/>
 				<div style={styles.container}>
 					<Input
 						style={styles.input}
-						placeholder="Title"
+						placeholder="文章標題"
 						value={this.state.title}
 						onChange={(e) => {
 							this.setState({
@@ -48,7 +48,7 @@ class Component extends React.Component {
 					<TreeSelect
 						showSearch
 						style={styles.input}
-						placeholder="select categories"
+						placeholder="文章類別"
 						allowClear
 						multiple
 						value={this.state.categories}
@@ -96,7 +96,7 @@ class Component extends React.Component {
 				<div style={styles.container}>
 					<Input
 						style={styles.input}
-						placeholder="Author"
+						placeholder="作者姓名（請小心輸入）"
 						value={this.state.author}
 						onChange={(e) => {
 							this.setState({
@@ -113,14 +113,14 @@ class Component extends React.Component {
 							const title = this.state.title;
 							const author = this.state.author;
 							const categories = this.state.categories;
-							if (title === "") {
-								message.info("Title cannot be blank.");
+							if (title === "" || author === "") {
+								message.info("請輸入文章標題及作者姓名");
 								return;
 							}
 							this.props.dispatch(BlogAction.post(quill, title, categories, author));
 						}}
 					>
-						Submit
+						發表文章
 					</Button>
 				</div>
 			</React.Fragment>
