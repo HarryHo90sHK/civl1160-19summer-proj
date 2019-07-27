@@ -42,7 +42,7 @@ class Component extends React.Component {
 					<TreeSelect
 						showSearch
 						style={styles.input}
-						placeholder="select categories"
+						placeholder="文章類別"
 						allowClear
 						multiple
 						value={this.state.categories}
@@ -96,7 +96,7 @@ class Component extends React.Component {
 							this.props.dispatch(BlogAction.edit(this.props.match.params._id, quill, categories));
 						}}
 					>
-						Submit
+						更新文章
 					</Button>
 				</div>
 			</React.Fragment>

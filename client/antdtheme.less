@@ -1,0 +1,242 @@
+body {
+  font-family: @SansSerif !important;
+}
+
+@header-container-overlay:
+  linear-gradient(90deg,rgba(0,0,0,0.5),rgba(70,70,70,0.5));
+@header-container-height: 150px;
+.header-container {
+  color: white;
+  background-image: @header-container-overlay,
+    url('https://static.wixstatic.com/media/06ac5c_68f6c17690a24135ac070cb6e21d1dce~mv2.jpg') !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  height: @header-container-height !important;
+  width: 100%;
+  margin: 0% !important;
+  padding: 0% !important;
+  position: fixed;
+  z-index: 1;
+}
+
+@content-container-overlay:
+        linear-gradient(0deg,rgba(0,0,100,0.0),rgba(0,0,100,0.6) 80px,rgba(0,0,100,0.6));
+.content-container {
+  color: white;
+  background-image: @content-container-overlay;
+  background-color: black;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  min-height: calc(~"100vh - @{header-container-height}") !important;
+  width: 100%;
+  margin-top: @header-container-height;
+  padding: 20px !important;
+}
+
+.header-row {
+  background-color: rgba(255,255,255,0.8);
+  color: rgba(0,0,100,1.0);
+  font-family: 'ChineseCaligraphyA';
+  line-height: 18pt;
+  height: 50px;
+  padding: 0px 0px 0px 0px !important;
+  flex-wrap: nowrap !important;     // Horizontal scroll
+  overflow-x: auto !important;      // Horizontal scroll
+  overflow-y: hidden !important;    // Horizontal scroll
+  .ant-col {
+    height: 50px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    a {
+      font-size: 18pt;
+      color: rgba(0, 0, 100, 1.0) !important;
+    }
+    transition: 0.3s;
+  }
+  .ant-col:hover {
+    background-color: rgba(0,0,100,1.0);
+    a {
+      color: white !important;
+    }
+  }
+}
+
+.sider-alwaystop {
+  z-index: 2;
+}
+
+.footer-row {
+  padding: 10px 0px 0px 0px;
+  a {
+    color: white !important;
+  }
+}
+
+/*
+ @font-face Synthesizer
+ */
+.font-face(@font-family, @filepath, @font-weight, @font-style) {
+  @font-face {
+    font-family: @font-family;
+    src: url('@{filepath}.eot');
+    src: url('@{filepath}.eot?#iefix') format('embedded-opentype'),
+    url('@{filepath}.woff2') format('woff2'),
+    url('@{filepath}.woff') format('woff'),
+    url('@{filepath}.ttf') format('truetype'),
+    url('@{filepath}.svg#svgFontName') format('svg');
+    font-weight:@font-weight;
+    font-style:@font-style;
+  }
+}
+
+.font-face('ChineseCaligraphyA', '//static.wixstatic.com/ufonts/06ac5c_e34c001044154854bdcfc92ad8e9701b/woff/file', normal, normal);
+.font-face('cwTeXMing', '//fonts.gstatic.com/ea/cwtexming/v3/cwTeXMing-zhonly', normal, normal);
+.font-face('cwTeXFangSong', '//fonts.gstatic.com/ea/cwtexfangsong/v3/cwTeXFangSong-zhonly', normal, normal);
+
+// Google Noto CJK Font
+@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+
+// Font Sets
+@Serif:
+        'LiSong', 'PMingLiu', 'cwTeXMing', 'Garamond', serif;
+@SansSerif:
+        'LiGothic', 'Noto Sans CJK TC', 'Microsoft JhengHei', 'Verdana', sans-serif;
+@FangSong:
+        'cwTeXFangSong', 'STFangSong', 'FangSong', 'Garamond', serif;
+@CalligraphyA:
+        'ChineseCaligraphyA', 'STKaiti', 'DFKai-SB', 'Times New Roman', sans-serif;
+
+.title-header {
+  font-size: 40pt;
+  font-family: @CalligraphyA;
+  font-weight: bold;
+  height: 100px;
+  padding: 30px 10px 5px 10px;
+}
+
+.card-category {
+  background-color: rgba(255,255,255,0.0) !important;
+  border: 0 !important;
+  margin: 10px 0px 10px 0px !important;
+
+  .ant-card-head {
+    font-family: @FangSong;
+    font-size: 25pt !important;
+    font-weight: bold;
+    border: 0 !important;
+    padding: 0;
+    color: white;
+  }
+
+  .ant-card-body {
+    padding: 0;
+  }
+
+  .ant-list-item {
+    background-color: rgba(255,255,255,0.7) !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    margin: 0 0 10px 0;
+    padding: 0 24px;
+  }
+
+  .ant-list-item-meta-title {
+    font-family: @SansSerif;
+    font-size: 18pt !important;
+    font-weight: bold;
+    border: 0 !important;
+  }
+
+  .category-card-row {
+    flex-wrap: wrap;
+    .ant-col {
+      margin: 15px;
+    }
+    .ant-card {
+      border-radius: 7px !important;
+      .ant-card-meta {
+        padding: 10px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.card-cover {
+  height: 300px;
+  object-fit: cover;
+}
+
+.blog-content {
+  background-color: rgba(255,255,255,0.7) !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  margin: 0 0 10px 0;
+  padding: 24px 24px;
+  color: rgba(0,0,0,0.85);
+  .blog-title {
+    font-family: @Serif;
+    font-size: 25pt;
+    font-weight: bold;
+    text-align: center;
+  }
+  .blog-meta {
+    font-family: @SansSerif;
+    font-size: 10pt;
+    font-weight: normal;
+    text-align: center;
+    .ant-btn {
+      background-color: rgba(0,0,0,0) ;
+      border-color: rgba(0,0,0,1);
+      font-weight: bold;
+    }
+    .ant-btn:hover, .ant-btn:focus {
+      color: rgba(0,0,170,1.0);
+      border-color: rgba(0,0,170,1.0);
+    }
+  }
+  .blog-text {
+    @font-size-base: 12pt;
+    @heading-1-size: ceil(@font-size-base * 2.00);
+    @heading-2-size: ceil(@font-size-base * 1.90);
+    @heading-3-size: ceil(@font-size-base * 1.70);
+    @heading-4-size: ceil(@font-size-base * 1.40);
+    font-family: @SansSerif !important;
+    font-size: @font-size-base !important;
+    .typography-title(@fontSize; @fontWeight; @lineHeight) {
+      margin-bottom: 0.5em;
+      font-weight: @fontWeight;
+      font-size: @fontSize;
+      line-height: @lineHeight !important;
+    }
+    h1 {
+      .typography-title(@heading-1-size, 600, 1);
+    }
+    h2 {
+      .typography-title(@heading-2-size, 500, 1);
+    }
+    h3 {
+      .typography-title(@heading-3-size, 300, 1);
+    }
+    h4 {
+      .typography-title(@heading-4-size, 300, 1);
+    }
+    a {
+      color: rgba(0,0,170,1.0);
+    }
+  }
+  hr {
+    height: 1px;
+    border: none;
+    background-color: #000;
+    color: rgba(0,0,0,0.85);
+    width:60%;
+    text-align:center;
+    margin: 0 auto;
+  }
+}
