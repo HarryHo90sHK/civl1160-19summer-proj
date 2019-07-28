@@ -10,6 +10,8 @@ import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
 import WebHeader from "../../components/header-component/header-component";
+import WebFooter from "../../components/footer-component/footer-component";
+import WebMetaHeader from "../../components/meta-component/meta-component";
 
 class Component extends React.Component {
 
@@ -36,6 +38,7 @@ class Component extends React.Component {
 
 		return (
 			<React.Fragment>
+				<WebMetaHeader />
 				<div>
 					<Layout>
 						<Layout>
@@ -101,8 +104,9 @@ class Component extends React.Component {
 										}}
 									/>
 								</Card>
+								<WebFooter />
 								<Row className="footer-row" type="flex" justify="center">
-									<Col><a onClick={this.siderToggle}>工具箱</a></Col>
+									<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>
 								</Row>
 							</Content>
 						</Layout>

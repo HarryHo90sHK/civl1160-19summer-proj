@@ -10,6 +10,8 @@ import "antd/dist/antd.css";
 import { styles } from "./styles";
 import { BlogAction } from "../../redux/blog/blog-action";
 import WebHeader from "../../components/header-component/header-component";
+import WebFooter from "../../components/footer-component/footer-component";
+import WebMetaHeader from "../../components/meta-component/meta-component";
 
 class Component extends React.Component {
 
@@ -45,7 +47,9 @@ class Component extends React.Component {
 			);
 		}
 		return (
-			<React.Fragment><Layout>
+			<React.Fragment>
+				<WebMetaHeader />
+				<Layout>
 					<Layout>
 						<WebHeader />
 						<Content className="content-container">
@@ -68,8 +72,9 @@ class Component extends React.Component {
 									}}
 								/>
 							</div>
+							<WebFooter />
 							<Row className="footer-row" type="flex" justify="center">
-								<Col><a onClick={this.siderToggle}>工具箱</a></Col>
+								<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>
 							</Row>
 						</Content>
 					</Layout>
