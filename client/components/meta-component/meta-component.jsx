@@ -1,5 +1,5 @@
 import React from 'react';
-import DocumentMeta from 'react-document-meta';
+import MetaTags from 'react-meta-tags';
 
 class WebMetaHeader extends React.Component {
     render() {
@@ -13,7 +13,11 @@ class WebMetaHeader extends React.Component {
         };
 
         return (
-            <DocumentMeta {...meta} />
+            <MetaTags>
+                <title>昔日香港資料庫</title>
+                <meta property="og:title" content="昔日香港資料庫" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+            </MetaTags>
         );
     }
 }
