@@ -21,7 +21,9 @@ class WebHeader extends React.Component {
                     <Col><a>運動</a></Col>
                     <Col><a>科技</a></Col>
                     <Col><a>社會</a></Col>
-                    <Col><a>其他</a></Col>
+                    <Col>
+                        <a href={"/extra"}>其他</a>
+                    </Col>
                 </Row>
             </Header>
         );
