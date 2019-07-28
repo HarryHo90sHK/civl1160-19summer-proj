@@ -4,6 +4,7 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { Button, PageHeader, TreeSelect } from "antd";
 import { EditorComponent } from "../../components/editor-component/editor-component";
+import WebMetaHeader from "../../components/meta-component/meta-component";
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
@@ -32,6 +33,7 @@ class Component extends React.Component {
 		}
 		return (
 			<React.Fragment>
+				<WebMetaHeader />
 				<PageHeader
 					onBack={() => {
 						this.props.history.push("/");
