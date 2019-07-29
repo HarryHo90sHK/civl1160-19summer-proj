@@ -6,6 +6,7 @@ import { CreatePage } from "./create-page/create-page";
 import { BlogPage } from "./blog-page/blog-page";
 import { BlogUpdatePage } from "./blog-update-page/blog-update-page";
 import { ExtraPage } from "./extra-page/extra-page"
+import { CategoryPage } from "./category-page/category-page";
 
 const history = createBrowserHistory();
 
@@ -34,6 +35,11 @@ export const Navigator = () => {
 					exact
 					path="/blogs/edit/:_id"
 					component={BlogUpdatePage}
+				/>
+				<Route
+					exact
+					path="/categories/:category"
+					component={CategoryPage}
 				/>
 				<Route
 					exact

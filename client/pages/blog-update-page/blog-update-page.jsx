@@ -60,14 +60,19 @@ class Component extends React.Component {
 						}}
 					>
 						{
-							_.union(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+							_.union([
+								"clothing",
+								"food",
+								"living",
+								"transport"
+							], _.union(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
 								return [
 									...accumulator,
 									...current.categories
 								];
 							}, [])), (this.state.tempCategory !== "" ? [
 								this.state.tempCategory
-							] : [])).map((category, index) => {
+							] : []))).map((category, index) => {
 								return (
 									<TreeSelect.TreeNode
 										value={category}

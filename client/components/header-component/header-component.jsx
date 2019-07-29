@@ -13,10 +13,10 @@ class WebHeader extends React.Component {
                     <Col>
                         <a href={"/"}>首頁</a>
                     </Col>
-                    <Col><a>衣</a></Col>
-                    <Col><a>食</a></Col>
-                    <Col><a>住</a></Col>
-                    <Col><a>行</a></Col>
+                    <Col><a href="/categories/clothing">衣</a></Col>
+                    <Col><a href="/categories/food">食</a></Col>
+                    <Col><a href="/categories/living">住</a></Col>
+                    <Col><a href="/categories/transport">行</a></Col>
                     <Col><a>娛樂</a></Col>
                     <Col><a>運動</a></Col>
                     <Col><a>科技</a></Col>
