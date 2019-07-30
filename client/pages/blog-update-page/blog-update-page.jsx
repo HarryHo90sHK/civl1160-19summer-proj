@@ -61,10 +61,8 @@ class Component extends React.Component {
 					>
 						{
 							_.union([
-								"clothing",
-								"food",
-								"living",
-								"transport"
+								"衣", "食", "住", "行",
+								"昔日報雜", "台前幕後"
 							], _.union(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
 								return [
 									...accumulator,

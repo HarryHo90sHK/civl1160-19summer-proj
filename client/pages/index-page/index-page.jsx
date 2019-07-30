@@ -30,11 +30,51 @@ class Component extends React.Component {
 	}
 
 	render() {
+		const latestBlogsList = this.props.Meteor.collection.blogs;
 
-		const cardCatGridStyle = {
-			width: '100%',
-			textAlign: 'center',
-		};
+		const latestBlogsDisplay = [];
+		if (latestBlogsList.length > 0) {
+			const paginationProps = {
+				showQuickJumper: true,
+				pageSize: 5,
+				total: latestBlogsList.length
+			}
+			latestBlogsDisplay.push(
+				<Card className="card-category" title="所有文章">
+					<List
+						itemLayout="vertical"
+						size="large"
+						dataSource={this.props.Meteor.collection.blogs}
+						pagination={paginationProps}
+						renderItem={(item) => {
+							const extract = (html) => {
+								let span = document.createElement("span");
+								span.innerHTML = html;
+								return span.textContent || span.innerText;
+							};
+							return (
+								<List.Item key={item._id}>
+									<List.Item.Meta
+										title={(
+											<a href={"/blogs/view/" + item._id}>
+												{item.title}
+											</a>
+										)}
+										description={
+											(item.author ? "" + item.author : "") +
+											(item.categories ? " | " + item.categories.join('、') : "")
+										}
+									/>
+									{extract(item.quill).length > 255 ?
+										extract(item.quill).substring(0, 255) + "..." :
+										extract(item.quill)}
+								</List.Item>
+							);
+						}}
+					/>
+				</Card>
+			);
+		}
 
 		return (
 			<React.Fragment>
@@ -48,62 +88,37 @@ class Component extends React.Component {
 									<Row className="category-card-row" type="flex" justify="space-around">
 										<Col><Card
 											style={{ height: 380, width: 300 }}
-											cover={<img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_51ee1cb636774e899bb5362dc852cf2b~mv2.jpg"/>}
+											cover={<a href={"/categories/衣"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_51ee1cb636774e899bb5362dc852cf2b~mv2.jpg"/></a>}
 										>
 											<Meta title="衣" description="日常衣著"/>
 										</Card></Col>
 										<Col><Card
 											style={{ height: 380, width: 300 }}
-											cover={<img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_fe2785587811487f852cf020e57eba0e~mv2_d_1600_1275_s_2.jpg"/>}
+											cover={<a href={"/categories/食"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_fe2785587811487f852cf020e57eba0e~mv2_d_1600_1275_s_2.jpg"/></a>}
 										>
 											<Meta title="食" description="日常飲食"/>
 										</Card></Col>
 										<Col><Card
 											style={{ height: 380, width: 300 }}
-											cover={<img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_b4a33a791ab64e74813608c1b91f9892~mv2.jpg"/>}
+											cover={<a href={"/categories/住"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_b4a33a791ab64e74813608c1b91f9892~mv2.jpg"/></a>}
 										>
 											<Meta title="住" description="日常居住"/>
 										</Card></Col>
 										<Col><Card
 											style={{ height: 380, width: 300 }}
-											cover={<img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_8b1d4fb84eb74f91884bc193d74f8c35~mv2.jpg"/>}
+											cover={<a href={"/categories/行"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_8b1d4fb84eb74f91884bc193d74f8c35~mv2.jpg"/></a>}
 										>
 											<Meta title="行" description="日常出行"/>
 										</Card></Col>
+										<Col><Card
+											style={{ height: 380, width: 300 }}
+											cover={<a href={"/categories"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_9b4fcc7a40a14cb1a7bce31147385bf2~mv2.jpg"/></a>}
+										>
+											<Meta title="其他分類" description="娛樂、運動、科技、社會等類"/>
+										</Card></Col>
 									</Row>
 								</Card>
-								<Card className="card-category" title="最新文章">
-									<List
-										itemLayout="vertical"
-										size="large"
-										dataSource={this.props.Meteor.collection.blogs}
-										renderItem={(item) => {
-											const extract = (html) => {
-												let span = document.createElement("span");
-												span.innerHTML = html;
-												return span.textContent || span.innerText;
-											};
-											return (
-												<List.Item key={item._id}>
-													<List.Item.Meta
-														title={(
-															<a href={"/blogs/view/" + item._id}>
-																{item.title}
-															</a>
-														)}
-														description={
-															(item.author ? "" + item.author : "") +
-															(item.categories ? " | " + item.categories.join('、') : "")
-														}
-													/>
-													{extract(item.quill).length > 255 ?
-														extract(item.quill).substring(0, 255) + "..." :
-														extract(item.quill)}
-												</List.Item>
-											);
-										}}
-									/>
-								</Card>
+								{latestBlogsDisplay}
 								<WebFooter />
 								<Row className="footer-row" type="flex" justify="center">
 									<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>

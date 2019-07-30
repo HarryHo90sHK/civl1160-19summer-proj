@@ -30,6 +30,21 @@ class Component extends React.Component {
 	}
 
 	render() {
+		const contentCatClassName = (category) => {
+			switch (category) {
+				case "衣":
+					return "-clothes";
+				case "食":
+					return "-food";
+				case "住":
+					return "-living";
+				case "行":
+					return "-transport";
+				default:
+					return "";
+			}
+		};
+
 		const blog = this.props.Meteor.collection.blogs.find((blog) => {
 			return (blog._id === this.props.match.params._id);
 		});
@@ -41,7 +56,7 @@ class Component extends React.Component {
 		const catButtons = [];
 		for (let i = 0; i < blog.categories.length; i++) {
 			catButtons.push(
-				<Button key={i}>
+				<Button key={i} onClick={ () => {this.props.history.push("/categories/" + blog.categories[i]);}}>
 					{blog.categories[i]}
 				</Button>,
 			);
@@ -52,7 +67,8 @@ class Component extends React.Component {
 				<Layout>
 					<Layout>
 						<WebHeader />
-						<Content className="content-container">
+						<Content className={"content-container" +
+							(blog.categories.length == 1 ? contentCatClassName(blog.categories[0]) : "")}>
 							<div className="blog-content">
 								<div className="blog-title">
 									{blog ? blog.title : ""}

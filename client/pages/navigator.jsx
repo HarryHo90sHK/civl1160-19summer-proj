@@ -7,6 +7,7 @@ import { BlogPage } from "./blog-page/blog-page";
 import { BlogUpdatePage } from "./blog-update-page/blog-update-page";
 import { ExtraPage } from "./extra-page/extra-page"
 import { CategoryPage } from "./category-page/category-page";
+import { AllCategoriesPage } from "./allcategories-page/allcategories-page";
 
 const history = createBrowserHistory();
 
@@ -40,6 +41,11 @@ export const Navigator = () => {
 					exact
 					path="/categories/:category"
 					component={CategoryPage}
+				/>
+				<Route
+					exact
+					path="/categories"
+					component={AllCategoriesPage}
 				/>
 				<Route
 					exact
