@@ -1,3 +1,5 @@
+@responsive-width: 800px;
+
 body {
   font-family: @SansSerif !important;
 }
@@ -72,7 +74,7 @@ body {
 
 .footer-row {
   padding: 10px 0px 0px 0px;
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: @responsive-width) {
     .hidden {
       display: none;
     }
@@ -233,6 +235,13 @@ body {
     }
     a {
       color: rgba(0,0,170,1.0);
+    }
+    .ql-video {
+      margin: auto;
+      display: block;
+      @width: 65vw;
+      width: @width;
+      height: @width * 9 / 16;    // Assume 16:9 aspect ratio
     }
   }
   hr {
