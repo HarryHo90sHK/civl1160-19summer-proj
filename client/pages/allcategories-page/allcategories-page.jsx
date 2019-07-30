@@ -2,16 +2,17 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Layout, Row, Col, Menu, List, Card } from "antd";
-const { Content, Sider } = Layout;
-const { SubMenu } = Menu;
-const { Meta } = Card;
+import {Layout, Row, Col, Menu, List, Card, Button} from "antd";
+
+const {Content, Sider} = Layout;
+const {SubMenu} = Menu;
+const {Meta} = Card;
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
-import { styles } from "./styles";
 import WebHeader from "../../components/header-component/header-component";
 import WebFooter from "../../components/footer-component/footer-component";
 import WebMetaHeader from "../../components/meta-component/meta-component";
+import _ from "lodash";
 
 class Component extends React.Component {
 
@@ -21,30 +22,43 @@ class Component extends React.Component {
 
 	state = {
 		collapsed: true
-	}
+	};
 
 	siderToggle = () => {
 		this.setState({
 			collapsed: !this.state.collapsed
 		});
-	}
+	};
 
 	render() {
-		const latestBlogsList = this.props.Meteor.collection.blogs;
+		const contentCatClassName = () => {
+			return "-allcategories";
+		};
 
-		const latestBlogsDisplay = [];
-		if (latestBlogsList.length > 0) {
+		const catBlogsCards = [];
+		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+			return [
+				...accumulator,
+				...current.categories
+			];
+		}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
+		for (let i = 0; i < catList.length; i++) {
+			const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+				return (blog.categories.includes(catList[i]));
+			});
+			if (catBlogList.length == 0)
+				continue;
 			const paginationProps = {
 				showQuickJumper: true,
 				pageSize: 5,
-				total: latestBlogsList.length
+				total: catBlogList.length
 			}
-			latestBlogsDisplay.push(
-				<Card className="card-category" title="所有文章">
+			catBlogsCards.push(
+				<Card className="card-category" title={catList[i]}>
 					<List
 						itemLayout="vertical"
 						size="large"
-						dataSource={this.props.Meteor.collection.blogs}
+						dataSource={catBlogList}
 						pagination={paginationProps}
 						renderItem={(item) => {
 							const extract = (html) => {
@@ -75,58 +89,34 @@ class Component extends React.Component {
 				</Card>
 			);
 		}
+		if (catBlogsCards.length == 0) {
+			catBlogsCards.push(
+				<Card className="card-category" title={""}>
+					<Meta className="no-bg-meta"
+						title={"暫 無 其 他 分 類"}
+						description={<img src="/assets/images/open-folder-outline-white.png" height="70px" />}
+					/>
+				</Card>
+			);
+		}
 
 		return (
 			<React.Fragment>
-				<WebMetaHeader />
+				<WebMetaHeader/>
 				<div>
 					<Layout>
 						<Layout>
-							<WebHeader />
-							<Content className="content-container">
-								<Card className="card-category" title="文章分類">
-									<Row className="category-card-row" type="flex" justify="space-around">
-										<Col><Card
-											style={{ height: 380, width: 300 }}
-											cover={<a href={"/categories/衣"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_51ee1cb636774e899bb5362dc852cf2b~mv2.jpg"/></a>}
-										>
-											<Meta title="衣" description="日常衣著"/>
-										</Card></Col>
-										<Col><Card
-											style={{ height: 380, width: 300 }}
-											cover={<a href={"/categories/食"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_fe2785587811487f852cf020e57eba0e~mv2_d_1600_1275_s_2.jpg"/></a>}
-										>
-											<Meta title="食" description="日常飲食"/>
-										</Card></Col>
-										<Col><Card
-											style={{ height: 380, width: 300 }}
-											cover={<a href={"/categories/住"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_b4a33a791ab64e74813608c1b91f9892~mv2.jpg"/></a>}
-										>
-											<Meta title="住" description="日常居住"/>
-										</Card></Col>
-										<Col><Card
-											style={{ height: 380, width: 300 }}
-											cover={<a href={"/categories/行"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_8b1d4fb84eb74f91884bc193d74f8c35~mv2.jpg"/></a>}
-										>
-											<Meta title="行" description="日常出行"/>
-										</Card></Col>
-										<Col><Card
-											style={{ height: 380, width: 300 }}
-											cover={<a href={"/categories"}><img className="card-cover" src="https://static.wixstatic.com/media/06ac5c_9b4fcc7a40a14cb1a7bce31147385bf2~mv2.jpg"/></a>}
-										>
-											<Meta title="其他分類" description="娛樂、運動、科技、社會等類"/>
-										</Card></Col>
-									</Row>
-								</Card>
-								{latestBlogsDisplay}
-								<WebFooter />
+							<WebHeader/>
+							<Content className={"content-container" + contentCatClassName()}>
+								{catBlogsCards}
+								<WebFooter/>
 								<Row className="footer-row" type="flex" justify="center">
 									<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>
 								</Row>
 							</Content>
 						</Layout>
 						<Sider className="sider-alwaystop" collapsible collapsed={this.state.collapsed}
-							   collapsedWidth="0" trigger={null} theme="light">
+						       collapsedWidth="0" trigger={null} theme="light">
 							<Menu theme="light" mode="inline">
 								<SubMenu title={<span>管理文章</span>}>
 									<Menu.Item
@@ -134,7 +124,7 @@ class Component extends React.Component {
 											this.props.history.push("/blogs/new");
 										}}
 									>
-									<span>新增文章</span>
+										<span>新增文章</span>
 									</Menu.Item>
 								</SubMenu>
 							</Menu>
@@ -166,4 +156,4 @@ const Redux = connect((store) => {
 	return {};
 })(Tracker);
 
-export const IndexPage = Redux;
+export const AllCategoriesPage = Redux;
