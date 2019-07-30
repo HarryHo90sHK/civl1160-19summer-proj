@@ -48,12 +48,18 @@ class Component extends React.Component {
 			});
 			if (catBlogList.length == 0)
 				continue;
+			const paginationProps = {
+				showQuickJumper: true,
+				pageSize: 5,
+				total: catBlogList.length
+			}
 			catBlogsCards.push(
 				<Card className="card-category" title={catList[i]}>
 					<List
 						itemLayout="vertical"
 						size="large"
 						dataSource={catBlogList}
+						pagination={paginationProps}
 						renderItem={(item) => {
 							const extract = (html) => {
 								let span = document.createElement("span");
