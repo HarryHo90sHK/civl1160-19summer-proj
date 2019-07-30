@@ -7,7 +7,6 @@ const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
-import "./styles.css";
 import { styles } from "./styles";
 import { BlogAction } from "../../redux/blog/blog-action";
 import WebHeader from "../../components/header-component/header-component";
