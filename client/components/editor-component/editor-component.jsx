@@ -42,6 +42,20 @@ class Component extends React.Component {
 							],
 							[
 								{
+									align: ""
+								},
+								{
+									align: "center"
+								},
+								{
+									align: "right"
+								},
+								{
+									align: "justify"
+								}
+								],
+							[
+								{
 									indent: "+1"
 								},
 								{
