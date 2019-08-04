@@ -41,6 +41,15 @@ class Component extends React.Component {
 					title={(blog ? blog.title : "")}
 				/>
 				<div style={styles.container}>
+					使用外部網站上載圖片（可直接 Copy & Paste），
+					然後在下方按<img src="/assets/images/magnifying-glass.png" alt="放大鏡" width="18" height="18"/>
+					貼上<b> .png/.jpg/.gif </b>的網址：
+					<b><a target="_blank" href="https://imgur.com/upload">Imgur</a></b>｜
+					<b><a target="_blank" href="https://pasteboard.co/">Pasteboard</a></b><p/>
+					否則，請在下方按<img src="/assets/images/quill-img-icon.png" alt="相片標誌" width="18" height="18"/>
+					直接上載，但需時可能非常長。
+				</div>
+				<div style={styles.container}>
 					<TreeSelect
 						showSearch
 						style={styles.input}

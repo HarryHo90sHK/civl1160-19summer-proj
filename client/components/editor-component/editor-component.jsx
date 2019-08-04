@@ -8,69 +8,85 @@ class Component extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.imageHandler = () => {
+			const range = this.quillRef.getEditor().getSelection();
+			const url = prompt("Enter or paste the image URL");
+			if (url)
+				this.quillRef.getEditor().insertEmbed(range.index, 'image', url);
+		}
 	}
 
 	render() {
+		var icons = Quill.import("ui/icons");
+		icons["imageEmbed"] = "<img src='/assets/images/magnifying-glass.png' width='18' height='18'/>";
+
 		return (
 			<React.Fragment>
 				<ReactQuill
+					ref={(el) => this.quillRef = el}
 					theme="snow"
 					modules={{
-						toolbar: [
-							[
-								{
-									header: [
-										1,
-										2,
-										3,
-										false
-									]
-								}
+						toolbar: {
+							container: [
+								[
+									{
+										header: [
+											1,
+											2,
+											3,
+											false
+										]
+									}
+								],
+								[
+									"bold",
+									"italic",
+									"underline"
+								],
+								[
+									{
+										list: "bullet"
+									},
+									{
+										list: "ordered"
+									}
+								],
+								[
+									{
+										align: ""
+									},
+									{
+										align: "center"
+									},
+									{
+										align: "right"
+									},
+									{
+										align: "justify"
+									}
+								],
+								[
+									{
+										indent: "+1"
+									},
+									{
+										indent: "-1"
+									}
+								],
+								[
+									"link",
+									"image",
+									"imageEmbed",
+									"video"
+									],
+								[
+									"clean"
+								]
 							],
-							[
-								"bold",
-								"italic",
-								"underline"
-							],
-							[
-								{
-									list: "bullet"
-								},
-								{
-									list: "ordered"
-								}
-							],
-							[
-								{
-									align: ""
-								},
-								{
-									align: "center"
-								},
-								{
-									align: "right"
-								},
-								{
-									align: "justify"
-								}
-							],
-							[
-								{
-									indent: "+1"
-								},
-								{
-									indent: "-1"
-								}
-							],
-							[
-								"link",
-								"image",
-								"video"
-							],
-							[
-								"clean"
-							]
-						]
+							handlers: {
+								'imageEmbed': this.imageHandler
+							}
+						}
 					}}
 					value={this.props.value}
 					onChange={(value) => {
