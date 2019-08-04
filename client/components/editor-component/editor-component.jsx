@@ -10,7 +10,7 @@ class Component extends React.Component {
 		super(props);
 		this.imageHandler = () => {
 			const range = this.quillRef.getEditor().getSelection();
-			const url = prompt("Enter the image URL");
+			const url = prompt("Enter or paste the image URL");
 			if (url)
 				this.quillRef.getEditor().insertEmbed(range.index, 'image', url);
 		}
