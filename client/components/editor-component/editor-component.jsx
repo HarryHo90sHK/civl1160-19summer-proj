@@ -17,6 +17,9 @@ class Component extends React.Component {
 	}
 
 	render() {
+		var icons = Quill.import("ui/icons");
+		icons["imageEmbed"] = "<img src='/assets/images/magnifying-glass.png' width='18' height='18'/>";
+
 		return (
 			<React.Fragment>
 				<ReactQuill
@@ -73,6 +76,7 @@ class Component extends React.Component {
 								[
 									"link",
 									"image",
+									"imageEmbed",
 									"video"
 									],
 								[
@@ -80,7 +84,7 @@ class Component extends React.Component {
 								]
 							],
 							handlers: {
-								'image': this.imageHandler
+								'imageEmbed': this.imageHandler
 							}
 						}
 					}}
