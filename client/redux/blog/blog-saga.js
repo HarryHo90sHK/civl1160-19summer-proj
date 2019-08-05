@@ -1,6 +1,7 @@
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
 import { BlogAction } from "./blog-action";
 import { blogs_db } from "../../../shared/collections/blogs";
+import { history } from "../../pages/navigator";
 
 const post = function* (action) {
 	try {
@@ -18,7 +19,7 @@ const post = function* (action) {
 
 const postSuccess = function* (action) {
 	try {
-		window.location = "/blogs/view/" + action.payload._id;
+		history.push("/blogs/view/" + action.payload._id);
 	} catch (err) {
 
 	}
@@ -40,7 +41,7 @@ const edit = function* (action) {
 
 const editSuccess = function* (action) {
 	try {
-		window.location = "/blogs/view/" + action.payload._id;
+		history.push("/blogs/view/" + action.payload._id);
 	} catch (err) {
 
 	}
@@ -57,7 +58,7 @@ const remove = function* (action) {
 
 const removeSuccess = function* () {
 	try {
-		window.location = "/";
+		history.push("/");
 	} catch (err) {
 
 	}

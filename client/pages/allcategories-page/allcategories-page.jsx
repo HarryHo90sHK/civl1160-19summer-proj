@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import {Layout, Row, Col, Menu, List, Card, Button} from "antd";
+import { Layout, Row, Col, Menu, List, Card, Button } from "antd";
 
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
@@ -70,7 +70,11 @@ class Component extends React.Component {
 								<List.Item key={item._id}>
 									<List.Item.Meta
 										title={(
-											<a href={"/blogs/view/" + item._id}>
+											<a
+												onClick={() => {
+													this.props.history.push("/blogs/view/" + item._id);
+												}}
+											>
 												{item.title}
 											</a>
 										)}
@@ -93,8 +97,8 @@ class Component extends React.Component {
 			catBlogsCards.push(
 				<Card className="card-category" title={""}>
 					<Meta className="no-bg-meta"
-						title={"暫 無 其 他 分 類"}
-						description={<img src="/assets/images/open-folder-outline-white.png" height="70px" />}
+					      title={"暫 無 其 他 分 類"}
+					      description={<img src="/assets/images/open-folder-outline-white.png" height="70px"/>}
 					/>
 				</Card>
 			);
