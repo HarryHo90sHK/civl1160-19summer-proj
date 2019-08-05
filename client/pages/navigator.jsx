@@ -9,7 +9,7 @@ import { ExtraPage } from "./extra-page/extra-page"
 import { CategoryPage } from "./category-page/category-page";
 import { AllCategoriesPage } from "./allcategories-page/allcategories-page";
 
-const history = createBrowserHistory();
+export const history = createBrowserHistory();
 
 export const Navigator = () => {
 	return (
