@@ -59,7 +59,11 @@ class Component extends React.Component {
 								<List.Item key={item._id}>
 									<List.Item.Meta
 										title={(
-											<a href={"/blogs/view/" + item._id}>
+											<a
+												onClick={() => {
+													this.props.history.push("/blogs/view/" + item._id);
+												}}
+											>
 												{item.title}
 											</a>
 										)}
