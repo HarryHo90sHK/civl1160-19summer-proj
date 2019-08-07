@@ -23,6 +23,7 @@ class Component extends React.Component {
 		return (
 			<React.Fragment>
 				<ReactQuill
+					className="quill-editor"
 					ref={(el) => this.quillRef = el}
 					theme="snow"
 					modules={{
