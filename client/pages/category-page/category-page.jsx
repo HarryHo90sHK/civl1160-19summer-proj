@@ -30,6 +30,11 @@ class Component extends React.Component {
 	};
 
 	render() {
+		if (this.props.Meteor.subscription.blogs) {
+			// TODO: blogs ready
+		} else {
+			// TODO: blogs loading
+		}
 		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
 			return (blog.categories.includes(this.props.match.params["category"]));
 		});
@@ -146,9 +151,12 @@ class Component extends React.Component {
 }
 
 const Tracker = withTracker(() => {
-	Meteor.subscribe("blogs_db");
+	const blogs = Meteor.subscribe("blogs_db");
 	return {
 		Meteor: {
+			subscription: {
+				blogs: blogs.ready()
+			},
 			collection: {
 				blogs: blogs_db.find().fetch()
 			},
