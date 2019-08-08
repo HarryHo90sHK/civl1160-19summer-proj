@@ -2,9 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Layout, Menu, Row, Col, Button, ConfigProvider } from "antd";
+import {Layout, Menu, Row, Col, Button, ConfigProvider, Card, Spin} from "antd";
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
+const { Meta } = Card;
 import { blogs_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
@@ -30,6 +31,81 @@ class Component extends React.Component {
 	}
 
 	render() {
+		const blogDisplay = [];
+		let blogCatFirst, blogCatLength;
+
+		if (this.props.Meteor.subscription.blogs) {
+
+			const blog = this.props.Meteor.collection.blogs.find((blog) => {
+				return (blog._id === this.props.match.params._id);
+			});
+			if (!blog) {
+				blogDisplay.push(
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"文 章 不 存 在"}
+							  description={"請檢查網址是否正確"}
+						/>
+					</Card>
+				);
+			}
+			else {
+				blogCatFirst = blog.categories[0];
+				blogCatLength = blog.categories.length;
+				const catButtons = [];
+				for (let i = 0; i < blog.categories.length; i++) {
+					catButtons.push(
+						<Button key={i} onClick={() => {
+							this.props.history.push("/categories/" + blog.categories[i]);
+						}}>
+							{blog.categories[i]}
+						</Button>,
+					);
+				}
+				blogDisplay.push(
+					<div className="blog-content">
+						<div className="blog-title">
+							{blog ? blog.title : ""}
+						</div>
+						<div className="blog-meta">
+							<p>{blog ? "作者：" + blog.author : ""}</p>
+							<div>
+								<ConfigProvider autoInsertSpaceInButton={false}>
+									{catButtons}
+								</ConfigProvider>
+							</div>
+						</div>
+						<br /><hr /><br />
+						<div className="blog-text"
+							 dangerouslySetInnerHTML={{
+								 __html: blog ? blog.quill : ""
+							 }}
+						/>
+					</div>
+				);
+				blogDisplay.push(
+					<WebFooter />
+				);
+				blogDisplay.push(
+					<Row className="footer-row" type="flex" justify="center">
+						<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>
+					</Row>
+				);
+			}
+
+		} else {
+
+			blogDisplay.push(
+				<Card className="card-category" title={""}>
+					<Meta className="no-bg-meta"
+						  title={"載入中，請稍後..."}
+						  description={<Spin size="large"/>}
+					/>
+				</Card>
+			);
+
+		}
+
 		const contentCatClassName = (category) => {
 			switch (category) {
 				case "衣":
@@ -45,22 +121,6 @@ class Component extends React.Component {
 			}
 		};
 
-		const blog = this.props.Meteor.collection.blogs.find((blog) => {
-			return (blog._id === this.props.match.params._id);
-		});
-		if (!blog) {
-			return (
-				<React.Fragment/>
-			);
-		}
-		const catButtons = [];
-		for (let i = 0; i < blog.categories.length; i++) {
-			catButtons.push(
-				<Button key={i} onClick={ () => {this.props.history.push("/categories/" + blog.categories[i]);}}>
-					{blog.categories[i]}
-				</Button>,
-			);
-		}
 		return (
 			<React.Fragment>
 				<WebMetaHeader />
@@ -68,30 +128,10 @@ class Component extends React.Component {
 					<Layout>
 						<WebHeader />
 						<Content className={"content-container" +
-							(blog.categories.length == 1 ? contentCatClassName(blog.categories[0]) : "")}>
-							<div className="blog-content">
-								<div className="blog-title">
-									{blog ? blog.title : ""}
-								</div>
-								<div className="blog-meta">
-									<p>{blog ? "作者：" + blog.author : ""}</p>
-									<div>
-										<ConfigProvider autoInsertSpaceInButton={false}>
-											{catButtons}
-										</ConfigProvider>
-									</div>
-								</div>
-								<br /><hr /><br />
-								<div className="blog-text"
-									dangerouslySetInnerHTML={{
-										__html: blog ? blog.quill : ""
-									}}
-								/>
-							</div>
-							<WebFooter />
-							<Row className="footer-row" type="flex" justify="center">
-								<Col className="hidden"><a onClick={this.siderToggle}>工具箱</a></Col>
-							</Row>
+						(this.props.Meteor.subscription.blogs ?
+							(blogCatLength == 1 ? contentCatClassName(blogCatFirst) : "") :
+							"")}>
+							{blogDisplay}
 						</Content>
 					</Layout>
 					<Sider className="sider-alwaystop" collapsible collapsed={this.state.collapsed}
@@ -123,10 +163,14 @@ class Component extends React.Component {
 
 }
 
-const Tracker = withTracker(() => {
-	Meteor.subscribe("blogs_db");
+const Tracker = withTracker((props) => {
+	const blogID = props.match.params._id;
+	const blogs_by_blog = Meteor.subscribe("blogs_db_by_blog", blogID);
 	return {
 		Meteor: {
+			subscription: {
+				blogs: blogs_by_blog.ready()
+			},
 			collection: {
 				blogs: blogs_db.find().fetch()
 			},
