@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Layout, Row, Col, Menu, List, Card } from "antd";
+import {Layout, Row, Col, Menu, List, Card, Spin} from "antd";
 
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
@@ -31,54 +31,70 @@ class Component extends React.Component {
 	}
 
 	render() {
-		const latestBlogsList = this.props.Meteor.collection.blogs;
-
 		const latestBlogsDisplay = [];
-		if (latestBlogsList.length > 0) {
-			const paginationProps = {
-				showQuickJumper: true,
-				pageSize: 5,
-				total: latestBlogsList.length
+
+		if (this.props.Meteor.subscription.blogs) {
+
+			const latestBlogsList = this.props.Meteor.collection.blogs;
+
+			if (latestBlogsList.length > 0) {
+				const paginationProps = {
+					showQuickJumper: true,
+					pageSize: 5,
+					total: latestBlogsList.length
+				}
+				latestBlogsDisplay.push(
+					<Card className="card-category" title="所有文章">
+						<List
+							itemLayout="vertical"
+							size="large"
+							dataSource={this.props.Meteor.collection.blogs}
+							pagination={paginationProps}
+							renderItem={(item) => {
+								const extract = (html) => {
+									let span = document.createElement("span");
+									span.innerHTML = html;
+									return span.textContent || span.innerText;
+								};
+								return (
+									<List.Item key={item._id}>
+										<List.Item.Meta
+											title={(
+												<a
+													onClick={() => {
+														this.props.history.push("/blogs/view/" + item._id);
+													}}
+												>
+													{item.title}
+												</a>
+											)}
+											description={
+												(item.author ? "" + item.author : "") +
+												(item.categories ? " | " + item.categories.join('、') : "")
+											}
+										/>
+										{extract(item.quill).length > 255 ?
+											extract(item.quill).substring(0, 255) + "..." :
+											extract(item.quill)}
+									</List.Item>
+								);
+							}}
+						/>
+					</Card>
+				);
 			}
+
+		} else {
+
 			latestBlogsDisplay.push(
-				<Card className="card-category" title="所有文章">
-					<List
-						itemLayout="vertical"
-						size="large"
-						dataSource={this.props.Meteor.collection.blogs}
-						pagination={paginationProps}
-						renderItem={(item) => {
-							const extract = (html) => {
-								let span = document.createElement("span");
-								span.innerHTML = html;
-								return span.textContent || span.innerText;
-							};
-							return (
-								<List.Item key={item._id}>
-									<List.Item.Meta
-										title={(
-											<a
-												onClick={() => {
-													this.props.history.push("/blogs/view/" + item._id);
-												}}
-											>
-												{item.title}
-											</a>
-										)}
-										description={
-											(item.author ? "" + item.author : "") +
-											(item.categories ? " | " + item.categories.join('、') : "")
-										}
-									/>
-									{extract(item.quill).length > 255 ?
-										extract(item.quill).substring(0, 255) + "..." :
-										extract(item.quill)}
-								</List.Item>
-							);
-						}}
+				<Card className="card-category" title={this.props.match.params["category"]}>
+					<Meta className="no-bg-meta"
+						  title={"載入中，請稍後..."}
+						  description={<Spin size="large"/>}
 					/>
 				</Card>
 			);
+
 		}
 
 		return (
@@ -197,9 +213,12 @@ class Component extends React.Component {
 }
 
 const Tracker = withTracker(() => {
-	Meteor.subscribe("blogs_db");
+	const blogs = Meteor.subscribe("blogs_db");
 	return {
 		Meteor: {
+			subscription: {
+				blogs: blogs.ready()
+			},
 			collection: {
 				blogs: blogs_db.find().fetch()
 			},

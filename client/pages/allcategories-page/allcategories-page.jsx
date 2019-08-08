@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { Layout, Row, Col, Menu, List, Card, Button } from "antd";
+import {Layout, Row, Col, Menu, List, Card, Button, Spin} from "antd";
 
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
@@ -31,78 +31,94 @@ class Component extends React.Component {
 	};
 
 	render() {
-		const contentCatClassName = () => {
-			return "-allcategories";
-		};
-
 		const catBlogsCards = [];
-		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
-			return [
-				...accumulator,
-				...current.categories
-			];
-		}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
-		for (let i = 0; i < catList.length; i++) {
-			const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
-				return (blog.categories.includes(catList[i]));
-			});
-			if (catBlogList.length == 0)
-				continue;
-			const paginationProps = {
-				showQuickJumper: true,
-				pageSize: 5,
-				total: catBlogList.length
+
+		if (this.props.Meteor.subscription.blogs) {
+
+			const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+				return [
+					...accumulator,
+					...current.categories
+				];
+			}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
+			for (let i = 0; i < catList.length; i++) {
+				const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+					return (blog.categories.includes(catList[i]));
+				});
+				if (catBlogList.length == 0)
+					continue;
+				const paginationProps = {
+					showQuickJumper: true,
+					pageSize: 5,
+					total: catBlogList.length
+				}
+				catBlogsCards.push(
+					<Card className="card-category" title={catList[i]}>
+						<List
+							itemLayout="vertical"
+							size="large"
+							dataSource={catBlogList}
+							pagination={paginationProps}
+							renderItem={(item) => {
+								const extract = (html) => {
+									let span = document.createElement("span");
+									span.innerHTML = html;
+									return span.textContent || span.innerText;
+								};
+								return (
+									<List.Item key={item._id}>
+										<List.Item.Meta
+											title={(
+												<a
+													onClick={() => {
+														this.props.history.push("/blogs/view/" + item._id);
+													}}
+												>
+													{item.title}
+												</a>
+											)}
+											description={
+												(item.author ? "" + item.author : "") +
+												(item.categories ? " | " + item.categories.join('、') : "")
+											}
+										/>
+										{extract(item.quill).length > 255 ?
+											extract(item.quill).substring(0, 255) + "..." :
+											extract(item.quill)}
+									</List.Item>
+								);
+							}}
+						/>
+					</Card>
+				);
 			}
-			catBlogsCards.push(
-				<Card className="card-category" title={catList[i]}>
-					<List
-						itemLayout="vertical"
-						size="large"
-						dataSource={catBlogList}
-						pagination={paginationProps}
-						renderItem={(item) => {
-							const extract = (html) => {
-								let span = document.createElement("span");
-								span.innerHTML = html;
-								return span.textContent || span.innerText;
-							};
-							return (
-								<List.Item key={item._id}>
-									<List.Item.Meta
-										title={(
-											<a
-												onClick={() => {
-													this.props.history.push("/blogs/view/" + item._id);
-												}}
-											>
-												{item.title}
-											</a>
-										)}
-										description={
-											(item.author ? "" + item.author : "") +
-											(item.categories ? " | " + item.categories.join('、') : "")
-										}
-									/>
-									{extract(item.quill).length > 255 ?
-										extract(item.quill).substring(0, 255) + "..." :
-										extract(item.quill)}
-								</List.Item>
-							);
-						}}
-					/>
-				</Card>
-			);
-		}
-		if (catBlogsCards.length == 0) {
+			if (catBlogsCards.length == 0) {
+				catBlogsCards.push(
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"暫 無 其 他 分 類"}
+							  description={<img src="/assets/images/open-folder-outline-white.png" height="70px"/>}
+						/>
+					</Card>
+				);
+			}
+
+		} else {
+
 			catBlogsCards.push(
 				<Card className="card-category" title={""}>
 					<Meta className="no-bg-meta"
-					      title={"暫 無 其 他 分 類"}
-					      description={<img src="/assets/images/open-folder-outline-white.png" height="70px"/>}
+						  title={"載入中，請稍後..."}
+						  description={<Spin size="large"/>}
 					/>
 				</Card>
 			);
+
 		}
+
+		const contentCatClassName = () => {
+			return "-allcategories";
+		};
 
 		return (
 			<React.Fragment>
@@ -141,10 +157,14 @@ class Component extends React.Component {
 
 }
 
-const Tracker = withTracker(() => {
-	Meteor.subscribe("blogs_db");
+const Tracker = withTracker((props) => {
+	const exclCatList = ["衣", "食", "住", "行", "昔日報雜", "台前幕後"];
+	const blogs_by_excl_only_cat = Meteor.subscribe("blogs_db_excl_only_cat", exclCatList);
 	return {
 		Meteor: {
+			subscription: {
+				blogs: blogs_by_excl_only_cat.ready()
+			},
 			collection: {
 				blogs: blogs_db.find().fetch()
 			},
