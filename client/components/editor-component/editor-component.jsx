@@ -18,7 +18,7 @@ class Component extends React.Component {
 
 	render() {
 		var icons = Quill.import("ui/icons");
-		icons["imageEmbed"] = "<img src='/assets/images/magnifying-glass.png' width='18' height='18'/>";
+		icons["imageEmbed"] = "<img src='/assets/images/magnifying-glass.png' width='18' height='18' title='Insert Image by URL'/>";
 
 		return (
 			<React.Fragment>

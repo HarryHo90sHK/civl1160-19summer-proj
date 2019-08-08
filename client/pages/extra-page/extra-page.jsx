@@ -27,7 +27,7 @@ class Component extends React.Component {
 
 		return (
 			<React.Fragment>
-				<WebMetaHeader />
+				<WebMetaHeader webtitle={"更多資料"}/>
 				<div>
 					<Layout>
 						<Layout>
