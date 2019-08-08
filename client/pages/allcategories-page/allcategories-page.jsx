@@ -50,7 +50,7 @@ class Component extends React.Component {
 						catBlogsCards.push(
 							<Card className="card-category" title={catList[i]}>
 								<Meta className="no-bg-meta"
-									  title={"載入中，請稍後..."}
+									  title={"載入中，請稍候..."}
 									  description={<Spin size="large"/>}
 								/>
 							</Card>
@@ -129,7 +129,7 @@ class Component extends React.Component {
 			catBlogsCards.push(
 				<Card className="card-category" title={""}>
 					<Meta className="no-bg-meta"
-						  title={"載入中，請稍後..."}
+						  title={"載入中，請稍候..."}
 						  description={<Spin size="large"/>}
 					/>
 				</Card>
@@ -143,7 +143,7 @@ class Component extends React.Component {
 
 		return (
 			<React.Fragment>
-				<WebMetaHeader/>
+				<WebMetaHeader webtitle={"其他分類"}/>
 				<div>
 					<Layout>
 						<Layout>

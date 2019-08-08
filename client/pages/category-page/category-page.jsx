@@ -110,7 +110,7 @@ class Component extends React.Component {
 			blogsDisplay.push(
 				<Card className="card-category" title={catName}>
 					<Meta className="no-bg-meta"
-						  title={"載入中，請稍後..."}
+						  title={"載入中，請稍候..."}
 						  description={<Spin size="large"/>}
 					/>
 				</Card>
@@ -135,7 +135,7 @@ class Component extends React.Component {
 
 		return (
 			<React.Fragment>
-				<WebMetaHeader/>
+				<WebMetaHeader webtitle={catName}/>
 				<div>
 					<Layout>
 						<Layout>

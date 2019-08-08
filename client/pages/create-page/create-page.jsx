@@ -27,7 +27,7 @@ class Component extends React.Component {
 	render() {
 		return (
 			<React.Fragment>
-				<WebMetaHeader />
+				<WebMetaHeader webtitle={"新增文章"}/>
 				<PageHeader
 					onBack={() => {
 						this.props.history.push("/");
@@ -35,13 +35,7 @@ class Component extends React.Component {
 					title="新文章"
 				/>
 				<div style={styles.container}>
-					使用外部網站上載圖片（可直接 Copy & Paste），
-					然後在下方按<img src="/assets/images/magnifying-glass.png" alt="放大鏡" width="18" height="18"/>
-					貼上<b> .png/.jpg/.gif </b>的網址：
-					<b><a target="_blank" href="https://imgur.com/upload">Imgur</a></b>｜
-					<b><a target="_blank" href="https://pasteboard.co/">Pasteboard</a></b><p/>
-					否則，請在下方按<img src="/assets/images/quill-img-icon.png" alt="相片標誌" width="18" height="18"/>
-					直接上載，但需時可能非常長。
+					<u>插入圖片：</u>要使用外部網站圖片或使用 <b><a target="_blank" href="https://imgur.com/upload">Imgur</a></b>、<b><a target="_blank" href="https://pasteboard.co/">Pasteboard</a></b> 等上載圖片，請按<img src="/assets/images/magnifying-glass.png" alt="放大鏡" width="18" height="18"/>貼上圖片網址。否則，請按<img src="/assets/images/quill-img-icon.png" alt="相片標誌" width="18" height="18"/>直接上載至本網站。
 				</div>
 				<div style={styles.container}>
 					<Input
