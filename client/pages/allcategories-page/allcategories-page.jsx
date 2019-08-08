@@ -32,26 +32,37 @@ class Component extends React.Component {
 
 	render() {
 		const catBlogsCards = [];
+		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+			return [
+				...accumulator,
+				...current.categories
+			];
+		}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
 
-		if (this.props.Meteor.subscription.blogs) {
+		if (this.props.Meteor.subscription.blogs || catList.length > 0) {
 
-			const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
-				return [
-					...accumulator,
-					...current.categories
-				];
-			}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
 			for (let i = 0; i < catList.length; i++) {
 				const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
 					return (blog.categories.includes(catList[i]));
 				});
-				if (catBlogList.length == 0)
+				if (catBlogList.length == 0) {
+					if (!this.props.Meteor.subscription.blogs) {
+						catBlogsCards.push(
+							<Card className="card-category" title={catList[i]}>
+								<Meta className="no-bg-meta"
+									  title={"載入中，請稍後..."}
+									  description={<Spin size="large"/>}
+								/>
+							</Card>
+						)
+					}
 					continue;
+				}
 				const paginationProps = {
 					showQuickJumper: true,
 					pageSize: 5,
 					total: catBlogList.length
-				}
+				};
 				catBlogsCards.push(
 					<Card className="card-category" title={catList[i]}>
 						<List
@@ -91,6 +102,16 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+				if (!this.props.Meteor.subscription.blogs) {
+					catBlogsCards.push(
+						<Card className="card-category" title={""}>
+							<Meta className="no-bg-meta"
+								  title={"正在載入更多文章..."}
+								  description={<Spin size="large"/>}
+							/>
+						</Card>
+					)
+				}
 			}
 			if (catBlogsCards.length == 0) {
 				catBlogsCards.push(

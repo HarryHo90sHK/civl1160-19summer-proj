@@ -32,17 +32,16 @@ class Component extends React.Component {
 
 	render() {
 		const latestBlogsDisplay = [];
+		const latestBlogsList = this.props.Meteor.collection.blogs;
 
-		if (this.props.Meteor.subscription.blogs) {
-
-			const latestBlogsList = this.props.Meteor.collection.blogs;
+		if (this.props.Meteor.subscription.blogs || latestBlogsList.length > 0) {
 
 			if (latestBlogsList.length > 0) {
 				const paginationProps = {
 					showQuickJumper: true,
 					pageSize: 5,
 					total: latestBlogsList.length
-				}
+				};
 				latestBlogsDisplay.push(
 					<Card className="card-category" title="所有文章">
 						<List
@@ -82,12 +81,22 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+				if (!this.props.Meteor.subscription.blogs) {
+					latestBlogsDisplay.push(
+						<Card className="card-category" title={""}>
+							<Meta className="no-bg-meta"
+								  title={"正在載入更多文章..."}
+								  description={<Spin size="large"/>}
+							/>
+						</Card>
+					)
+				}
 			}
 
 		} else {
 
 			latestBlogsDisplay.push(
-				<Card className="card-category" title={this.props.match.params["category"]}>
+				<Card className="card-category" title="所有文章">
 					<Meta className="no-bg-meta"
 						  title={"載入中，請稍後..."}
 						  description={<Spin size="large"/>}

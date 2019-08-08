@@ -32,19 +32,18 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
+		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+			return (blog.categories.includes(catName));
+		});
 
-		if (this.props.Meteor.subscription.blogs) {
-
-			const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
-				return (blog.categories.includes(catName));
-			});
+		if (this.props.Meteor.subscription.blogs || catBlogList.length > 0) {
 
 			if (catBlogList.length > 0) {
 				const paginationProps = {
 					showQuickJumper: true,
 					pageSize: 5,
 					total: catBlogList.length
-				}
+				};
 				blogsDisplay.push(
 					<Card className="card-category"
 						  title={this.props.match.params["category"]}>
@@ -85,6 +84,16 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+				if (!this.props.Meteor.subscription.blogs) {
+					blogsDisplay.push(
+						<Card className="card-category" title={""}>
+							<Meta className="no-bg-meta"
+								  title={"正在載入更多文章..."}
+								  description={<Spin size="large"/>}
+							/>
+						</Card>
+					)
+				}
 			} else {
 				blogsDisplay.push(
 					<Card className="card-category" title={catName}>
