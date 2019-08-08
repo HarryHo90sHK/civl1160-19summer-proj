@@ -187,7 +187,15 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_excl_only_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find().fetch()
+				blogs: blogs_db.find({}, { transform: function(blog) {
+						const extract = (html) => {
+							let span = document.createElement("span");
+							span.innerHTML = html;
+							return span.textContent || span.innerText;
+						};
+						blog.quill = extract(blog.quill).substring(0, 256);
+						return blog;
+					}}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
