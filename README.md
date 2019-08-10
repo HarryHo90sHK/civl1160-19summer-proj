@@ -22,7 +22,7 @@ Verify the installation.
 
 In Shell, clone this repository:
 
-```shell
+```bash
 git clone https://github.com/HarryHo90sHK/civl1160-19summer-proj.git
 cd civl1160-19summer-proj
 meteor npm install
@@ -55,9 +55,20 @@ db.createView('blogs_extract', 'blogs',
 ### Deployment
 
 Deploy `master` on [Heroku](https://dashboard.heroku.com/). 
-Also, refer to mLab's manual to create the MongoDB View `blogs_extract`.
+
+Also, refer to mLab's manual to create the MongoDB View `blogs_extract`. Usually, you can install a MongoDB client on Linux using `sudo apt install mongodb-client`, and then connect to your Heroku mLab MongoDB using the shell: 
+
+```bash
+mongo ds145245.mlab.com:45245/<database-name> -u <database-username> -p <database-password>
+```
+
+### Miscellaneous
+
+#### Manage MongoDB
+
+To manage your online MongoDB, you can use command-line tools such as `mongodb-client`, or GUI tools such as [Robo 3T](https://robomongo.org/download). Common functions include viewing, updating and removing documents.
 
 ### Contributing
 
 - Christopher Wong [@pkcwong](https://github.com/pkcwong)
-- Harry Ho [@HarryHo90sHK][https://github.com/HarryHo90sHK]
+- Harry Ho [@HarryHo90sHK](https://github.com/HarryHo90sHK)
