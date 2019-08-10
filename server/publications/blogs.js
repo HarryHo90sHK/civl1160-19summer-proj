@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { blogs_db } from "../../shared/collections/blogs";
+import { blogs_db, blogs_extr_db } from "../../shared/collections/blogs";
 
 Meteor.publish("blogs_db", () => {
 	return blogs_db.find();
