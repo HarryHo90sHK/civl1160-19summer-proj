@@ -7,7 +7,7 @@ import {Layout, Row, Col, Menu, List, Card, Spin} from "antd";
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
 const {Meta} = Card;
-import { blogs_db } from "../../../shared/collections/blogs";
+import { blogs_extr_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
 import WebHeader from "../../components/header-component/header-component";
@@ -38,7 +38,7 @@ class Component extends React.Component {
 
 	render() {
 		const latestBlogsDisplay = [];
-		const latestBlogsList = this.props.Meteor.collection.blogs_extract;
+		const latestBlogsList = this.props.Meteor.collection.blogs_extr;
 
 		if (latestBlogsList.length > 0) {
 			const paginationProps = {
@@ -51,7 +51,7 @@ class Component extends React.Component {
 					<List
 						itemLayout="vertical"
 						size="large"
-						dataSource={this.props.Meteor.collection.blogs_extract}
+						dataSource={this.props.Meteor.collection.blogs_extr}
 						pagination={paginationProps}
 						renderItem={(item) => {
 							return (

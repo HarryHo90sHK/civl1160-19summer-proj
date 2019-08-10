@@ -7,7 +7,7 @@ import { Layout, Row, Col, Menu, List, Card, Spin } from "antd";
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
 const {Meta} = Card;
-import { blogs_db } from "../../../shared/collections/blogs";
+import { blogs_extr_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import WebHeader from "../../components/header-component/header-component";
 import WebFooter from "../../components/footer-component/footer-component";
@@ -38,7 +38,7 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs_extract;
+		const catBlogList = this.props.Meteor.collection.blogs_extr;
 
 		if (catBlogList.length > 0) {
 			const paginationProps = {

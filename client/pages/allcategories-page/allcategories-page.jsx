@@ -7,7 +7,7 @@ import {Layout, Row, Col, Menu, List, Card, Button, Spin} from "antd";
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
 const {Meta} = Card;
-import { blogs_db } from "../../../shared/collections/blogs";
+import { blogs_extr_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import WebHeader from "../../components/header-component/header-component";
 import WebFooter from "../../components/footer-component/footer-component";
@@ -38,7 +38,7 @@ class Component extends React.Component {
 
 	render() {
 		const catBlogsCards = [];
-		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs_extract.reduce((accumulator, current) => {
+		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs_extr.reduce((accumulator, current) => {
 			return [
 				...accumulator,
 				...current.categories
@@ -47,11 +47,11 @@ class Component extends React.Component {
 
 		if (catList.length > 0) {
 			for (let i = 0; i < catList.length; i++) {
-				const catBlogList = this.props.Meteor.collection.blogs_extract.filter((blog) => {
+				const catBlogList = this.props.Meteor.collection.blogs_extr.filter((blog) => {
 					return (blog.categories.includes(catList[i]));
 				});
 				if (catBlogList.length == 0) {
-					if (!this.props.Meteor.subscription.blogs_extract) {
+					if (!this.props.Meteor.subscription.blogs_extr) {
 						catBlogsCards.push(
 							<Card className="card-category" title={catList[i]}>
 								<Meta className="no-bg-meta"
@@ -100,7 +100,7 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
-				if (!this.props.Meteor.subscription.blogs_extract) {
+				if (!this.props.Meteor.subscription.blogs_extr) {
 					catBlogsCards.push(
 						<Card className="card-category" title={""}>
 							<Meta className="no-bg-meta"
@@ -112,7 +112,7 @@ class Component extends React.Component {
 				}
 			}
 		} else {
-			if (this.props.Meteor.subscription.blogs_extract) {
+			if (this.props.Meteor.subscription.blogs_extr) {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
