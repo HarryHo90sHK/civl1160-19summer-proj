@@ -38,7 +38,7 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs;
+		const catBlogList = this.props.Meteor.collection.blogs_extract;
 
 		if (catBlogList.length > 0) {
 			const paginationProps = {
@@ -72,14 +72,14 @@ class Component extends React.Component {
 											(item.categories ? " | " + item.categories.join('、') : "")
 										}
 									/>
-									{item.quill}
+									{extractHTML(item.quillextr).substring(0, 255) + (item.quillelli ? "..." : "")}
 								</List.Item>
 							);
 						}}
 					/>
 				</Card>
 			);
-			if (!this.props.Meteor.subscription.blogs) {
+			if (!this.props.Meteor.subscription.blogs_extr) {
 				blogsDisplay.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -90,7 +90,7 @@ class Component extends React.Component {
 				)
 			}
 		} else {
-			if (this.props.Meteor.subscription.blogs) {
+			if (this.props.Meteor.subscription.blogs_extr) {
 				blogsDisplay.push(
 					<Card className="card-category" title={catName}>
 						<Meta className="no-bg-meta"
@@ -165,21 +165,14 @@ class Component extends React.Component {
 
 const Tracker = withTracker((props) => {
 	const catName = props.match.params["category"];
-	const blogs_by_cat = Meteor.subscribe("blogs_db_by_cat", catName);
+	const blogs_extr_by_cat = Meteor.subscribe("blogs_extr_db_by_cat", catName);
 	return {
 		Meteor: {
 			subscription: {
-				blogs: blogs_by_cat.ready()
+				blogs_extr: blogs_extr_by_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({"categories": {$all: [catName]}},
-					{ transform: function(blog) {
-						blog.quill = blog.quill.substring(0, 1000);
-						let ellipses = (blog.quill.length >= 1000);
-						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
-						return blog;
-					}
-				}).fetch()
+				blogs_extr: blogs_extr_db.find({"categories": {$all: [catName]}}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
