@@ -21,12 +21,54 @@ class WebHeader extends React.Component {
 							首頁
 						</a>
 					</Col>
-					<Col><a href={"/categories/衣"}>衣</a></Col>
-					<Col><a href={"/categories/食"}>食</a></Col>
-					<Col><a href={"/categories/住"}>住</a></Col>
-					<Col><a href={"/categories/行"}>行</a></Col>
-					<Col><a href={"/categories"}>其他分類</a></Col>
-					<Col><a href={"/extra"}>其他</a></Col>
+					<Col><a
+						onClick={() => {
+							history.push("/categories/衣")
+						}}
+						>
+							衣
+						</a>
+					</Col>
+					<Col><a
+						onClick={() => {
+							history.push("/categories/食")
+						}}
+						>
+							食
+						</a>
+					</Col>
+					<Col><a
+						onClick={() => {
+							history.push("/categories/住")
+						}}
+						>
+							住
+						</a>
+					</Col>
+					<Col><a
+						onClick={() => {
+							history.push("/categories/行")
+						}}
+						>
+							行
+						</a>
+					</Col>
+					<Col><a
+						onClick={() => {
+							history.push("/categories")
+						}}
+						>
+							其他分類
+						</a>
+					</Col>
+					<Col><a
+						onClick={() => {
+							history.push("/extra")
+						}}
+						>
+							其他
+						</a>
+					</Col>
 				</Row>
 			</Header>
 		);

@@ -13,9 +13,9 @@ Install the following frameworks and packages: [NodeJS](https://nodejs.org/en/) 
 Verify the installation.
 
 ```bash
-    node --version
-    npm --version
-    meteor --version
+node --version
+npm --version
+meteor --version
 ```
 
 ### Build
@@ -44,10 +44,10 @@ db.createView('blogs_extract', 'blogs',
             "quillextr": {
                 $substrCP: ["$quill", 0, 1000]
             },
-			"quillelli": {
-				$gt: [{$strLenCP: "$quill"}, 1000]
-			},
-			quill: 0
+            "quillelli": {
+                $gt: [{$strLenCP: "$quill"}, 1000]
+            },
+            quill: 0
         }
     }]);
 ```
@@ -61,6 +61,8 @@ Also, refer to mLab's manual to create the MongoDB View `blogs_extract`. Usually
 ```bash
 mongo ds145245.mlab.com:45245/<database-name> -u <database-username> -p <database-password>
 ```
+
+Then, within the MongoDB client shell, you can run the `createView` command above.
 
 ### Miscellaneous
 
