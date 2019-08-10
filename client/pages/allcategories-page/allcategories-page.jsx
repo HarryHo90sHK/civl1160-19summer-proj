@@ -186,7 +186,7 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_db.find({}, { transform: function(blog) {
 						blog.quill = blog.quill.substring(0, 1000);
 						blog.quill = extractHTML(blog.quill).substring(0, 256);
-						if (blog.quill.length >= 256)
+						if (blog.quill.length == 255)
 							blog.quill = blog.quill.substring(0, (blog.quill.indexOf("<") > 0 ? blog.quill.indexOf("<") : 255)) + "...";
 						return blog;
 					}
