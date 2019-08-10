@@ -54,7 +54,8 @@ db.createView('blogs_extract', 'blogs',
 
 ### Deployment
 
-Deploy `master` on [Heroku](https://dashboard.heroku.com/).
+Deploy `master` on [Heroku](https://dashboard.heroku.com/). 
+Also, refer to mLab's manual to create the MongoDB View `blogs_extract`.
 
 ### Contributing
 
