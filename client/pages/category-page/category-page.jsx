@@ -13,6 +13,12 @@ import WebHeader from "../../components/header-component/header-component";
 import WebFooter from "../../components/footer-component/footer-component";
 import WebMetaHeader from "../../components/meta-component/meta-component";
 
+const extractHTML = (html) => {
+	let span = document.createElement("span");
+	span.innerHTML = html;
+	return span.textContent || span.innerText;
+};
+
 class Component extends React.Component {
 
 	constructor(props) {
@@ -32,69 +38,59 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
-			return (blog.categories.includes(catName));
-		});
+		const catBlogList = this.props.Meteor.collection.blogs;
 
-		if (this.props.Meteor.subscription.blogs || catBlogList.length > 0) {
-
-			if (catBlogList.length > 0) {
-				const paginationProps = {
-					showQuickJumper: true,
-					pageSize: 5,
-					total: catBlogList.length
-				};
+		if (catBlogList.length > 0) {
+			const paginationProps = {
+				showQuickJumper: true,
+				pageSize: 5,
+				total: catBlogList.length
+			};
+			blogsDisplay.push(
+				<Card className="card-category"
+					  title={this.props.match.params["category"]}>
+					<List
+						itemLayout="vertical"
+						size="large"
+						dataSource={catBlogList}
+						pagination={paginationProps}
+						renderItem={(item) => {
+							return (
+								<List.Item key={item._id}>
+									<List.Item.Meta
+										title={(
+											<a
+												onClick={() => {
+													this.props.history.push("/blogs/view/" + item._id);
+												}}
+											>
+												{item.title}
+											</a>
+										)}
+										description={
+											(item.author ? "" + item.author : "") +
+											(item.categories ? " | " + item.categories.join('、') : "")
+										}
+									/>
+									{item.quill}
+								</List.Item>
+							);
+						}}
+					/>
+				</Card>
+			);
+			if (!this.props.Meteor.subscription.blogs) {
 				blogsDisplay.push(
-					<Card className="card-category"
-						  title={this.props.match.params["category"]}>
-						<List
-							itemLayout="vertical"
-							size="large"
-							dataSource={catBlogList}
-							pagination={paginationProps}
-							renderItem={(item) => {
-								const extract = (html) => {
-									let span = document.createElement("span");
-									span.innerHTML = html;
-									return span.textContent || span.innerText;
-								};
-								return (
-									<List.Item key={item._id}>
-										<List.Item.Meta
-											title={(
-												<a
-													onClick={() => {
-														this.props.history.push("/blogs/view/" + item._id);
-													}}
-												>
-													{item.title}
-												</a>
-											)}
-											description={
-												(item.author ? "" + item.author : "") +
-												(item.categories ? " | " + item.categories.join('、') : "")
-											}
-										/>
-										{extract(item.quill).length > 255 ?
-											extract(item.quill).substring(0, 255) + "..." :
-											extract(item.quill)}
-									</List.Item>
-								);
-							}}
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"正在載入更多文章..."}
+							  description={<Spin size="large"/>}
 						/>
 					</Card>
-				);
-				if (!this.props.Meteor.subscription.blogs) {
-					blogsDisplay.push(
-						<Card className="card-category" title={""}>
-							<Meta className="no-bg-meta"
-								  title={"正在載入更多文章..."}
-								  description={<Spin size="large"/>}
-							/>
-						</Card>
-					)
-				}
-			} else {
+				)
+			}
+		} else {
+			if (this.props.Meteor.subscription.blogs) {
 				blogsDisplay.push(
 					<Card className="card-category" title={catName}>
 						<Meta className="no-bg-meta"
@@ -103,19 +99,16 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+			} else {
+				blogsDisplay.push(
+					<Card className="card-category" title={catName}>
+						<Meta className="no-bg-meta"
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				);
 			}
-
-		} else {
-
-			blogsDisplay.push(
-				<Card className="card-category" title={catName}>
-					<Meta className="no-bg-meta"
-						  title={"載入中，請稍候..."}
-						  description={<Spin size="large"/>}
-					/>
-				</Card>
-			);
-
 		}
 
 		const contentCatClassName = (category) => {
@@ -179,15 +172,14 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
-						const extract = (html) => {
-							let span = document.createElement("span");
-							span.innerHTML = html;
-							return span.textContent || span.innerText;
-						};
-						blog.quill = extract(blog.quill).substring(0, 256);
+				blogs: blogs_db.find({"categories": {$all: [catName]}},
+					{ transform: function(blog) {
+						blog.quill = blog.quill.substring(0, 1000);
+						let ellipses = (blog.quill.length >= 1000);
+						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
 						return blog;
-					}}).fetch()
+					}
+				}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

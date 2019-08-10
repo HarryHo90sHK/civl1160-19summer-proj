@@ -14,6 +14,12 @@ import WebFooter from "../../components/footer-component/footer-component";
 import WebMetaHeader from "../../components/meta-component/meta-component";
 import _ from "lodash";
 
+const extractHTML = (html) => {
+	let span = document.createElement("span");
+	span.innerHTML = html;
+	return span.textContent || span.innerText;
+};
+
 class Component extends React.Component {
 
 	constructor(props) {
@@ -39,8 +45,7 @@ class Component extends React.Component {
 			];
 		}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
 
-		if (this.props.Meteor.subscription.blogs || catList.length > 0) {
-
+		if (catList.length > 0) {
 			for (let i = 0; i < catList.length; i++) {
 				const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
 					return (blog.categories.includes(catList[i]));
@@ -71,11 +76,6 @@ class Component extends React.Component {
 							dataSource={catBlogList}
 							pagination={paginationProps}
 							renderItem={(item) => {
-								const extract = (html) => {
-									let span = document.createElement("span");
-									span.innerHTML = html;
-									return span.textContent || span.innerText;
-								};
 								return (
 									<List.Item key={item._id}>
 										<List.Item.Meta
@@ -93,9 +93,7 @@ class Component extends React.Component {
 												(item.categories ? " | " + item.categories.join('、') : "")
 											}
 										/>
-										{extract(item.quill).length > 255 ?
-											extract(item.quill).substring(0, 255) + "..." :
-											extract(item.quill)}
+										{item.quill}
 									</List.Item>
 								);
 							}}
@@ -113,7 +111,8 @@ class Component extends React.Component {
 					)
 				}
 			}
-			if (catBlogsCards.length == 0) {
+		} else {
+			if (this.props.Meteor.subscription.blogs) {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -122,19 +121,16 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+			} else {
+				catBlogsCards.push(
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				);
 			}
-
-		} else {
-
-			catBlogsCards.push(
-				<Card className="card-category" title={""}>
-					<Meta className="no-bg-meta"
-						  title={"載入中，請稍候..."}
-						  description={<Spin size="large"/>}
-					/>
-				</Card>
-			);
-
 		}
 
 		const contentCatClassName = () => {
@@ -187,15 +183,14 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_excl_only_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
-						const extract = (html) => {
-							let span = document.createElement("span");
-							span.innerHTML = html;
-							return span.textContent || span.innerText;
-						};
-						blog.quill = extract(blog.quill).substring(0, 256);
-						return blog;
-					}}).fetch()
+				blogs: blogs_db.find({"categories": { $elemMatch: {$nin: exclCatList} }},
+					{ transform: function(blog) {
+							blog.quill = blog.quill.substring(0, 1000);
+							let ellipses = (blog.quill.length >= 1000);
+							blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
+							return blog;
+						}
+					}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

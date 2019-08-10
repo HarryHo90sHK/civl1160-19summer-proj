@@ -14,6 +14,12 @@ import WebHeader from "../../components/header-component/header-component";
 import WebFooter from "../../components/footer-component/footer-component";
 import WebMetaHeader from "../../components/meta-component/meta-component";
 
+const extractHTML = (html) => {
+	let span = document.createElement("span");
+	span.innerHTML = html;
+	return span.textContent || span.innerText;
+};
+
 class Component extends React.Component {
 
 	constructor(props) {
@@ -34,76 +40,65 @@ class Component extends React.Component {
 		const latestBlogsDisplay = [];
 		const latestBlogsList = this.props.Meteor.collection.blogs;
 
-		if (this.props.Meteor.subscription.blogs || latestBlogsList.length > 0) {
-
-			if (latestBlogsList.length > 0) {
-				const paginationProps = {
-					showQuickJumper: true,
-					pageSize: 5,
-					total: latestBlogsList.length
-				};
-				latestBlogsDisplay.push(
-					<Card className="card-category" title="所有文章">
-						<List
-							itemLayout="vertical"
-							size="large"
-							dataSource={this.props.Meteor.collection.blogs}
-							pagination={paginationProps}
-							renderItem={(item) => {
-								const extract = (html) => {
-									let span = document.createElement("span");
-									span.innerHTML = html;
-									return span.textContent || span.innerText;
-								};
-								return (
-									<List.Item key={item._id}>
-										<List.Item.Meta
-											title={(
-												<a
-													onClick={() => {
-														this.props.history.push("/blogs/view/" + item._id);
-													}}
-												>
-													{item.title}
-												</a>
-											)}
-											description={
-												(item.author ? "" + item.author : "") +
-												(item.categories ? " | " + item.categories.join('、') : "")
-											}
-										/>
-										{extract(item.quill).length > 255 ?
-											extract(item.quill).substring(0, 255) + "..." :
-											extract(item.quill)}
-									</List.Item>
-								);
-							}}
-						/>
-					</Card>
-				);
-				if (!this.props.Meteor.subscription.blogs) {
-					latestBlogsDisplay.push(
-						<Card className="card-category" title={""}>
-							<Meta className="no-bg-meta"
-								  title={"正在載入更多文章..."}
-								  description={<Spin size="large"/>}
-							/>
-						</Card>
-					)
-				}
-			}
-
-		} else {
-
+		if (latestBlogsList.length > 0) {
+			const paginationProps = {
+				showQuickJumper: true,
+				pageSize: 5,
+				total: latestBlogsList.length
+			};
 			latestBlogsDisplay.push(
 				<Card className="card-category" title="所有文章">
-					<Meta className="no-bg-meta"
-						  title={"載入中，請稍候..."}
-						  description={<Spin size="large"/>}
+					<List
+						itemLayout="vertical"
+						size="large"
+						dataSource={this.props.Meteor.collection.blogs}
+						pagination={paginationProps}
+						renderItem={(item) => {
+							return (
+								<List.Item key={item._id}>
+									<List.Item.Meta
+										title={(
+											<a
+												onClick={() => {
+													this.props.history.push("/blogs/view/" + item._id);
+												}}
+											>
+												{item.title}
+											</a>
+										)}
+										description={
+											(item.author ? "" + item.author : "") +
+											(item.categories ? " | " + item.categories.join('、') : "")
+										}
+									/>
+									{item.quill}
+								</List.Item>
+							);
+						}}
 					/>
 				</Card>
 			);
-
+			if (!this.props.Meteor.subscription.blogs) {
+				latestBlogsDisplay.push(
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"正在載入更多文章..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				)
+			}
+		} else {
+			if (!this.props.Meteor.subscription.blogs) {
+				latestBlogsDisplay.push(
+					<Card className="card-category" title="所有文章">
+						<Meta className="no-bg-meta"
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				);
+			}
 		}
 
 		return (
@@ -230,14 +225,12 @@ const Tracker = withTracker(() => {
 			},
 			collection: {
 				blogs: blogs_db.find({}, { transform: function(blog) {
-						const extract = (html) => {
-							let span = document.createElement("span");
-							span.innerHTML = html;
-							return span.textContent || span.innerText;
-						};
-						blog.quill = extract(blog.quill).substring(0, 256);
+						blog.quill = blog.quill.substring(0, 1000);
+						let ellipses = (blog.quill.length >= 1000);
+						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
 						return blog;
-					}}).fetch()
+					}
+				}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

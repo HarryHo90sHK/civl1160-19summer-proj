@@ -170,7 +170,7 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_blog.ready()
 			},
 			collection: {
-				blogs: blogs_db.find().fetch()
+				blogs: blogs_db.find({"_id": blogID}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
