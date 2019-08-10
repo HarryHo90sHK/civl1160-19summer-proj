@@ -35,7 +35,7 @@ In Shell, run Mongo within Meteor:
 meteor mongo
 ```
 
-Then, create the following MongoDB View:
+Then, within your local server create the following MongoDB View:
 
 ```js
 db.createView('blogs_extract', 'blogs', 
