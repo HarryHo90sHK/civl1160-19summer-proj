@@ -183,13 +183,14 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_excl_only_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
-						blog.quill = blog.quill.substring(0, 1000);
-						let ellipses = (blog.quill.length >= 1000);
-						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
-						return blog;
-					}
-				}).fetch()
+				blogs: blogs_db.find({"categories": { $elemMatch: {$nin: exclCatList} }},
+					{ transform: function(blog) {
+							blog.quill = blog.quill.substring(0, 1000);
+							let ellipses = (blog.quill.length >= 1000);
+							blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
+							return blog;
+						}
+					}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

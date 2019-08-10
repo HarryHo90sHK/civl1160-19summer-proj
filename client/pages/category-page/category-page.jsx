@@ -38,9 +38,7 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
-			return (blog.categories.includes(catName));
-		});
+		const catBlogList = this.props.Meteor.collection.blogs;
 
 		if (catBlogList.length > 0) {
 			const paginationProps = {
@@ -174,7 +172,8 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
+				blogs: blogs_db.find({"categories": {$all: [catName]}},
+					{ transform: function(blog) {
 						blog.quill = blog.quill.substring(0, 1000);
 						let ellipses = (blog.quill.length >= 1000);
 						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
