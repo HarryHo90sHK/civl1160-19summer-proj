@@ -38,7 +38,7 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+		const catBlogList = this.props.Meteor.collection.blogs_extr.filter((blog) => {
 			return (blog.categories.includes(catName));
 		});
 
