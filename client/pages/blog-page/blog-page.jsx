@@ -34,12 +34,10 @@ class Component extends React.Component {
 	render() {
 		const blogDisplay = [];
 		let blogCatFirst, blogCatLength;
-		const blog = this.props.Meteor.collection.blogs.find((blog) => {
-			return (blog._id === this.props.match.params._id);
-		});
+		const blog = this.props.Meteor.collection.blog;
 
 		if (!blog) {
-			if (this.props.Meteor.subscription.blogs) {
+			if (this.props.Meteor.subscription.blog) {
 				blogDisplay.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -167,10 +165,10 @@ const Tracker = withTracker((props) => {
 	return {
 		Meteor: {
 			subscription: {
-				blogs: blogs_by_blog.ready()
+				blog: blogs_by_blog.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({"_id": blogID}).fetch()
+				blog: blogs_db.findOne({"_id": blogID})
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

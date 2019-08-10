@@ -38,7 +38,9 @@ class Component extends React.Component {
 	render() {
 		const catName = this.props.match.params["category"];
 		const blogsDisplay = [];
-		const catBlogList = this.props.Meteor.collection.blogs_extr;
+		const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+			return (blog.categories.includes(catName));
+		});
 
 		if (catBlogList.length > 0) {
 			const paginationProps = {
@@ -172,7 +174,7 @@ const Tracker = withTracker((props) => {
 				blogs_extr: blogs_extr_by_cat.ready()
 			},
 			collection: {
-				blogs_extr: blogs_extr_db.find({"categories": {$all: [catName]}}).fetch()
+				blogs_extr: blogs_extr_db.find().fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),

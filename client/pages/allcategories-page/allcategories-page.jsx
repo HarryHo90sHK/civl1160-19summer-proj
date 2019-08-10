@@ -174,7 +174,7 @@ class Component extends React.Component {
 
 }
 
-const Tracker = withTracker((props) => {
+const Tracker = withTracker(() => {
 	const exclCatList = ["衣", "食", "住", "行", "昔日報雜", "台前幕後"];
 	const blogs_extr_by_excl_only_cat = Meteor.subscribe("blogs_extr_db_excl_only_cat", exclCatList);
 	return {
