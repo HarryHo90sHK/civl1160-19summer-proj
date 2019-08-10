@@ -7,7 +7,7 @@ import {Layout, Row, Col, Menu, List, Card, Spin} from "antd";
 const {Content, Sider} = Layout;
 const {SubMenu} = Menu;
 const {Meta} = Card;
-import { blogs_db } from "../../../shared/collections/blogs";
+import { blogs_extr_db } from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
 import WebHeader from "../../components/header-component/header-component";
@@ -38,7 +38,7 @@ class Component extends React.Component {
 
 	render() {
 		const latestBlogsDisplay = [];
-		const latestBlogsList = this.props.Meteor.collection.blogs;
+		const latestBlogsList = this.props.Meteor.collection.blogs_extr;
 
 		if (latestBlogsList.length > 0) {
 			const paginationProps = {
@@ -51,7 +51,7 @@ class Component extends React.Component {
 					<List
 						itemLayout="vertical"
 						size="large"
-						dataSource={this.props.Meteor.collection.blogs}
+						dataSource={this.props.Meteor.collection.blogs_extr}
 						pagination={paginationProps}
 						renderItem={(item) => {
 							return (
@@ -71,14 +71,14 @@ class Component extends React.Component {
 											(item.categories ? " | " + item.categories.join('、') : "")
 										}
 									/>
-									{item.quill}
+									{extractHTML(item.quillextr).substring(0, 255) + (item.quillelli ? "..." : "")}
 								</List.Item>
 							);
 						}}
 					/>
 				</Card>
 			);
-			if (!this.props.Meteor.subscription.blogs) {
+			if (!this.props.Meteor.subscription.blogs_extr) {
 				latestBlogsDisplay.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -89,7 +89,7 @@ class Component extends React.Component {
 				)
 			}
 		} else {
-			if (!this.props.Meteor.subscription.blogs) {
+			if (!this.props.Meteor.subscription.blogs_extr) {
 				latestBlogsDisplay.push(
 					<Card className="card-category" title="所有文章">
 						<Meta className="no-bg-meta"
@@ -217,20 +217,14 @@ class Component extends React.Component {
 }
 
 const Tracker = withTracker(() => {
-	const blogs = Meteor.subscribe("blogs_db");
+	const blogs_extr = Meteor.subscribe("blogs_extr_db");
 	return {
 		Meteor: {
 			subscription: {
-				blogs: blogs.ready()
+				blogs_extr: blogs_extr.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
-						blog.quill = blog.quill.substring(0, 1000);
-						let ellipses = (blog.quill.length >= 1000);
-						blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
-						return blog;
-					}
-				}).fetch()
+				blogs_extr: blogs_extr_db.find().fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
