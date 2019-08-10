@@ -36,65 +36,64 @@ class Component extends React.Component {
 			return (blog.categories.includes(catName));
 		});
 
-		if (this.props.Meteor.subscription.blogs || catBlogList.length > 0) {
-
-			if (catBlogList.length > 0) {
-				const paginationProps = {
-					showQuickJumper: true,
-					pageSize: 5,
-					total: catBlogList.length
-				};
+		if (catBlogList.length > 0) {
+			const paginationProps = {
+				showQuickJumper: true,
+				pageSize: 5,
+				total: catBlogList.length
+			};
+			blogsDisplay.push(
+				<Card className="card-category"
+					  title={this.props.match.params["category"]}>
+					<List
+						itemLayout="vertical"
+						size="large"
+						dataSource={catBlogList}
+						pagination={paginationProps}
+						renderItem={(item) => {
+							const extract = (html) => {
+								let span = document.createElement("span");
+								span.innerHTML = html;
+								return span.textContent || span.innerText;
+							};
+							return (
+								<List.Item key={item._id}>
+									<List.Item.Meta
+										title={(
+											<a
+												onClick={() => {
+													this.props.history.push("/blogs/view/" + item._id);
+												}}
+											>
+												{item.title}
+											</a>
+										)}
+										description={
+											(item.author ? "" + item.author : "") +
+											(item.categories ? " | " + item.categories.join('、') : "")
+										}
+									/>
+									{extract(item.quill).length > 255 ?
+										extract(item.quill).substring(0, 255) + "..." :
+										extract(item.quill)}
+								</List.Item>
+							);
+						}}
+					/>
+				</Card>
+			);
+			if (!this.props.Meteor.subscription.blogs) {
 				blogsDisplay.push(
-					<Card className="card-category"
-						  title={this.props.match.params["category"]}>
-						<List
-							itemLayout="vertical"
-							size="large"
-							dataSource={catBlogList}
-							pagination={paginationProps}
-							renderItem={(item) => {
-								const extract = (html) => {
-									let span = document.createElement("span");
-									span.innerHTML = html;
-									return span.textContent || span.innerText;
-								};
-								return (
-									<List.Item key={item._id}>
-										<List.Item.Meta
-											title={(
-												<a
-													onClick={() => {
-														this.props.history.push("/blogs/view/" + item._id);
-													}}
-												>
-													{item.title}
-												</a>
-											)}
-											description={
-												(item.author ? "" + item.author : "") +
-												(item.categories ? " | " + item.categories.join('、') : "")
-											}
-										/>
-										{extract(item.quill).length > 255 ?
-											extract(item.quill).substring(0, 255) + "..." :
-											extract(item.quill)}
-									</List.Item>
-								);
-							}}
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"正在載入更多文章..."}
+							  description={<Spin size="large"/>}
 						/>
 					</Card>
-				);
-				if (!this.props.Meteor.subscription.blogs) {
-					blogsDisplay.push(
-						<Card className="card-category" title={""}>
-							<Meta className="no-bg-meta"
-								  title={"正在載入更多文章..."}
-								  description={<Spin size="large"/>}
-							/>
-						</Card>
-					)
-				}
-			} else {
+				)
+			}
+		} else {
+			if (this.props.Meteor.subscription.blogs) {
 				blogsDisplay.push(
 					<Card className="card-category" title={catName}>
 						<Meta className="no-bg-meta"
@@ -103,19 +102,16 @@ class Component extends React.Component {
 						/>
 					</Card>
 				);
+			} else {
+				blogsDisplay.push(
+					<Card className="card-category" title={catName}>
+						<Meta className="no-bg-meta"
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				);
 			}
-
-		} else {
-
-			blogsDisplay.push(
-				<Card className="card-category" title={catName}>
-					<Meta className="no-bg-meta"
-						  title={"載入中，請稍候..."}
-						  description={<Spin size="large"/>}
-					/>
-				</Card>
-			);
-
 		}
 
 		const contentCatClassName = (category) => {

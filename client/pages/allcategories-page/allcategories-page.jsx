@@ -39,8 +39,7 @@ class Component extends React.Component {
 			];
 		}, [])), "衣", "食", "住", "行", "昔日報雜", "台前幕後");
 
-		if (this.props.Meteor.subscription.blogs || catList.length > 0) {
-
+		if (catList.length > 0) {
 			for (let i = 0; i < catList.length; i++) {
 				const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
 					return (blog.categories.includes(catList[i]));
@@ -113,7 +112,17 @@ class Component extends React.Component {
 					)
 				}
 			}
-			if (catBlogsCards.length == 0) {
+		} else {
+			if (this.props.Meteor.subscription.blogs) {
+				catBlogsCards.push(
+					<Card className="card-category" title={""}>
+						<Meta className="no-bg-meta"
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
+						/>
+					</Card>
+				);
+			} else {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -123,18 +132,6 @@ class Component extends React.Component {
 					</Card>
 				);
 			}
-
-		} else {
-
-			catBlogsCards.push(
-				<Card className="card-category" title={""}>
-					<Meta className="no-bg-meta"
-						  title={"載入中，請稍候..."}
-						  description={<Spin size="large"/>}
-					/>
-				</Card>
-			);
-
 		}
 
 		const contentCatClassName = () => {
