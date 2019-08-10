@@ -117,8 +117,8 @@ class Component extends React.Component {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
-							  title={"載入中，請稍候..."}
-							  description={<Spin size="large"/>}
+							  title={"暫 無 其 他 分 類"}
+							  description={<img src="/assets/images/open-folder-outline-white.png" height="70px"/>}
 						/>
 					</Card>
 				);
@@ -126,8 +126,8 @@ class Component extends React.Component {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
-							  title={"暫 無 其 他 分 類"}
-							  description={<img src="/assets/images/open-folder-outline-white.png" height="70px"/>}
+							  title={"載入中，請稍候..."}
+							  description={<Spin size="large"/>}
 						/>
 					</Card>
 				);
