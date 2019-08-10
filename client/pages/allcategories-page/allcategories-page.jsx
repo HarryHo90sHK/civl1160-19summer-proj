@@ -14,6 +14,12 @@ import WebFooter from "../../components/footer-component/footer-component";
 import WebMetaHeader from "../../components/meta-component/meta-component";
 import _ from "lodash";
 
+const extractHTML = (html) => {
+	let span = document.createElement("span");
+	span.innerHTML = html;
+	return span.textContent || span.innerText;
+};
+
 class Component extends React.Component {
 
 	constructor(props) {
@@ -70,11 +76,6 @@ class Component extends React.Component {
 							dataSource={catBlogList}
 							pagination={paginationProps}
 							renderItem={(item) => {
-								const extract = (html) => {
-									let span = document.createElement("span");
-									span.innerHTML = html;
-									return span.textContent || span.innerText;
-								};
 								return (
 									<List.Item key={item._id}>
 										<List.Item.Meta
@@ -92,9 +93,9 @@ class Component extends React.Component {
 												(item.categories ? " | " + item.categories.join('、') : "")
 											}
 										/>
-										{extract(item.quill).length > 255 ?
-											extract(item.quill).substring(0, 255) + "..." :
-											extract(item.quill)}
+										{extractHTML(item.quillextr).length > 255 ?
+											extractHTML(item.quillextr).substring(0, 255) + "..." :
+											extractHTML(item.quillextr)}
 									</List.Item>
 								);
 							}}
@@ -184,15 +185,19 @@ const Tracker = withTracker((props) => {
 				blogs: blogs_by_excl_only_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({}, { transform: function(blog) {
-						const extract = (html) => {
-							let span = document.createElement("span");
-							span.innerHTML = html;
-							return span.textContent || span.innerText;
-						};
-						blog.quill = extract(blog.quill).substring(0, 256);
+				blogs: blogs_db.find({
+					$expr: {
+						$project: {
+							quill: 0,
+							quillextr: { $substr: [ "$quill", 0, 1000 ] }
+						}
+					}
+				}, { transform: function(blog) {
+						blog.quillextr = extractHTML(blog.quillextr).substring(0, 256).
+						substring(0, (blog.quillextr.indexOf("<") > 0 ? blog.quillextr.indexOf("<") : 256));
 						return blog;
-					}}).fetch()
+					}
+				}).fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
