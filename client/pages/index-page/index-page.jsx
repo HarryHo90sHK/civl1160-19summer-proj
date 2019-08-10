@@ -71,9 +71,9 @@ class Component extends React.Component {
 											(item.categories ? " | " + item.categories.join('、') : "")
 										}
 									/>
-									{extractHTML(item.quillextr).length > 255 ?
-										extractHTML(item.quillextr).substring(0, 255) + "..." :
-										extractHTML(item.quillextr)}
+									{extractHTML(item.quill).length > 255 ?
+										extractHTML(item.quill).substring(0, 255) + "..." :
+										extractHTML(item.quill)}
 								</List.Item>
 							);
 						}}
@@ -226,16 +226,10 @@ const Tracker = withTracker(() => {
 				blogs: blogs.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({
-					$expr: {
-						$project: {
-							quill: 0,
-							quillextr: { $substr: [ "$quill", 0, 1000 ] }
-						}
-					}
-				}, { transform: function(blog) {
-						blog.quillextr = extractHTML(blog.quillextr).substring(0, 256).
-						substring(0, (blog.quillextr.indexOf("<") > 0 ? blog.quillextr.indexOf("<") : 256));
+				blogs: blogs_db.find({}, { transform: function(blog) {
+						blog.quill = blog.quill.substring(0, 1000);
+						blog.quill = extractHTML(blog.quill).substring(0, 256).
+						substring(0, (blog.quill.indexOf("<") > 0 ? blog.quill.indexOf("<") : 256));
 						return blog;
 					}
 				}).fetch()
