@@ -38,7 +38,7 @@ class Component extends React.Component {
 
 	render() {
 		const catBlogsCards = [];
-		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs.reduce((accumulator, current) => {
+		const catList = _.without(_.uniq(this.props.Meteor.collection.blogs_extract.reduce((accumulator, current) => {
 			return [
 				...accumulator,
 				...current.categories
@@ -47,11 +47,11 @@ class Component extends React.Component {
 
 		if (catList.length > 0) {
 			for (let i = 0; i < catList.length; i++) {
-				const catBlogList = this.props.Meteor.collection.blogs.filter((blog) => {
+				const catBlogList = this.props.Meteor.collection.blogs_extract.filter((blog) => {
 					return (blog.categories.includes(catList[i]));
 				});
 				if (catBlogList.length == 0) {
-					if (!this.props.Meteor.subscription.blogs) {
+					if (!this.props.Meteor.subscription.blogs_extract) {
 						catBlogsCards.push(
 							<Card className="card-category" title={catList[i]}>
 								<Meta className="no-bg-meta"
@@ -93,14 +93,14 @@ class Component extends React.Component {
 												(item.categories ? " | " + item.categories.join('、') : "")
 											}
 										/>
-										{item.quill}
+										{extractHTML(item.quillextr).substring(0, 255) + (item.quillelli ? "..." : "")}
 									</List.Item>
 								);
 							}}
 						/>
 					</Card>
 				);
-				if (!this.props.Meteor.subscription.blogs) {
+				if (!this.props.Meteor.subscription.blogs_extract) {
 					catBlogsCards.push(
 						<Card className="card-category" title={""}>
 							<Meta className="no-bg-meta"
@@ -112,7 +112,7 @@ class Component extends React.Component {
 				}
 			}
 		} else {
-			if (this.props.Meteor.subscription.blogs) {
+			if (this.props.Meteor.subscription.blogs_extract) {
 				catBlogsCards.push(
 					<Card className="card-category" title={""}>
 						<Meta className="no-bg-meta"
@@ -176,21 +176,14 @@ class Component extends React.Component {
 
 const Tracker = withTracker((props) => {
 	const exclCatList = ["衣", "食", "住", "行", "昔日報雜", "台前幕後"];
-	const blogs_by_excl_only_cat = Meteor.subscribe("blogs_db_excl_only_cat", exclCatList);
+	const blogs_extr_by_excl_only_cat = Meteor.subscribe("blogs_extr_db_excl_only_cat", exclCatList);
 	return {
 		Meteor: {
 			subscription: {
-				blogs: blogs_by_excl_only_cat.ready()
+				blogs_extr: blogs_extr_by_excl_only_cat.ready()
 			},
 			collection: {
-				blogs: blogs_db.find({"categories": { $elemMatch: {$nin: exclCatList} }},
-					{ transform: function(blog) {
-							blog.quill = blog.quill.substring(0, 1000);
-							let ellipses = (blog.quill.length >= 1000);
-							blog.quill = extractHTML(blog.quill).substring(0, 255) + (ellipses ? "..." : "");
-							return blog;
-						}
-					}).fetch()
+				blogs_extr: blogs_extr_db.find().fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
