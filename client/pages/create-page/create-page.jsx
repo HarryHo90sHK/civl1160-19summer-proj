@@ -102,6 +102,7 @@ class Component extends React.Component {
 					/>
 				</div>
 				<div style={styles.container}>
+					<br/><br/>
 					<Input
 						style={styles.input}
 						placeholder="作者姓名（請小心輸入）"
@@ -114,7 +115,6 @@ class Component extends React.Component {
 					/>
 				</div>
 				<div style={styles.container}>
-					<br/><br/>
 					<Button
 						type="primary"
 						onClick={() => {

@@ -124,7 +124,7 @@ class Component extends React.Component {
 					<Layout>
 						<WebHeader/>
 						<Content className={"content-container" +
-						(this.props.Meteor.subscription.blogs ?
+						(this.props.Meteor.subscription.blog ?
 							(blogCatLength == 1 ? contentCatClassName(blogCatFirst) : "") :
 							"")}>
 							{blogDisplay}
