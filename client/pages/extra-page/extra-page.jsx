@@ -5,7 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import { Layout, Row, Col, Card } from "antd";
 const { Content } = Layout;
 const { Meta } = Card;
-import { blogs_db } from "../../../shared/collections/blogs";
+import {blogs_db, blogs_extr_db} from "../../../shared/collections/blogs";
 import "antd/dist/antd.css";
 import { styles } from "./styles";
 import WebHeader from "../../components/header-component/header-component";
@@ -79,11 +79,11 @@ class Component extends React.Component {
 }
 
 const Tracker = withTracker(() => {
-	Meteor.subscribe("blogs_db");
+	Meteor.subscribe("blogs_extr_db");
 	return {
 		Meteor: {
 			collection: {
-				blogs: blogs_db.find().fetch()
+				blogs_extr: blogs_extr_db.find().fetch()
 			},
 			user: Meteor.user(),
 			userId: Meteor.userId(),
